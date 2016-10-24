@@ -1,22 +1,22 @@
-# Proyecto de fin de grado
-## Desarrollo de Aplicaciones web
+#Proyecto de fin de grado
+##Desarrollo de Aplicaciones web
 
-## Proyecto
+##Proyecto
 El proyecto consiste en realizar una página web para una tienda online con gestion de productos, gestión de
 usuarios y gestión de entrada de mercancía y facturación sin utilizar ninguna aplicación ya existente como prestashop,
 woocomerce, etc..
 También se desarrollará una aplicación web que se ejecutará en entorno local donde se poderán realizar ventas en la
 tienda de forma física.
 
-## Objetivos
+##Objetivos
 
-1. Gestion de usuarios
+###Gestion de usuarios
 
   - Sistema de roles
   - Registro / Login social (facebook, google)
 
 
-2. Gestion de productos
+###Gestion de productos
   
   - Asociados con una categoría
   - Asociados con un proveedor
@@ -24,23 +24,23 @@ tienda de forma física.
   - Creación de etiquetas para los artículos
 
 
-3. Gestion de entrada de mercancía
+###Gestion de entrada de mercancía
 
   - Crear entrada de mercancia de proveedores introduciendo la factura 
 
 
-4. Facturación
+###Facturación
 
   - Creación de facturas de los envíos pagados
   - Creación de facturas de los tickets que se realicen en la tienda física
   - Creación de listado trimestral de facturas
   - Creación de listado anual de facturas
 
-## Tecnologías
+##Tecnologías
 
 El proyecto se dividirá en tres partes:
 
-1. API Rest
+###API Rest
   
   - Se creará una aplicación web que será la encargada de gestionar y mantener centralizada toda la información de la
   tienda, usuarios, productos, facturas, etc...
@@ -50,14 +50,14 @@ El proyecto se dividirá en tres partes:
   - Las peticiones para realizar cualquier tipo de cambio estará restringida a usuarios con un rol específico, en caso
     de ser modificaciones en una cuenta concreta o un pedido, deberán de ser realizadas por el mismo usuario.
 
-2. Página Web
+###Página Web
 
   - Se creará la página web utilizando Node.js de lado de servidor con el que nos conectaremos al API para obtener los
   datos y los renderizaremos utilizando un sistema de plantillas (Pug) y HTML5, CSS3 de lado del cliente.
 
   - Se utilizará LESS y Javascript ES6 con Babel utilizando Gulp para transformalo en CSS y JS respectivamente.
 
-3. Aplicación Web
+###Aplicación Web
 
   - Se creará una aplicación web utilizando Electron que se comunicará con la API Rest para obtener y enviar
     información. Desde ella se podra:
