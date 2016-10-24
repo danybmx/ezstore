@@ -47,7 +47,7 @@ El proyecto se dividirá en tres partes:
 
   - Se utilizará Java para realizar la aplicación con MySQL como base de datos.
 
-  - Las peticiones para realizar cualquier tipo de cambio estará restringida a usuarios con un rol específico, en caso
+  - Las peticiones para realizar cualquier tipo de cambio estarán restringida a usuarios con un rol específico, en caso
     de ser modificaciones en una cuenta concreta o un pedido, deberán de ser realizadas por el mismo usuario.
 
 ###Página Web
@@ -55,7 +55,8 @@ El proyecto se dividirá en tres partes:
   - Se creará la página web utilizando Node.js de lado de servidor con el que nos conectaremos al API para obtener los
   datos y los renderizaremos utilizando un sistema de plantillas (Pug) y HTML5, CSS3 de lado del cliente.
 
-  - Se utilizará LESS y Javascript ES6 con Babel utilizando Gulp para transformalo en CSS y JS respectivamente.
+  - Se utilizará LESS y Javascript ES6 con Babel utilizando Gulp para transformalo en CSS y JS respectivamente para el
+    lado del cliente.
 
 ###Aplicación Web
 
@@ -71,4 +72,6 @@ El proyecto se dividirá en tres partes:
 
 ## Ampliación
 
-Documentación y testing de todo el proyecto
+- Creación de contenedore docker para la aplicación
+- Sistemas de deploy automatizado
+- Documentación y testing de todo el proyecto
