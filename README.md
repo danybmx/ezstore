@@ -42,7 +42,8 @@ El proyecto se dividirá en tres partes:
   - Se creará una aplicación web que será la encargada de gestionar y mantener centralizada toda la información de la
   tienda, usuarios, productos, facturas, etc...
   - Se utilizará Java para realizar la aplicación con MySQL como base de datos.
-  - Las peticiones para realizar cualquier tipo de cambio estarán restringida a usuarios con un rol específico, en caso
+  - La comunicación se realizará utilizando JSON
+  - Las peticiones para realizar cualquier tipo de cambio estarán restringidas a usuarios con un rol específico, en caso
   de ser modificaciones en una cuenta concreta o un pedido, deberán de ser realizadas por el mismo usuario.
 
 ###Página Web
