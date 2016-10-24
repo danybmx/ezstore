@@ -10,23 +10,26 @@ tienda de forma física.
 
 ## Objetivos
 
-- Gestion de usuarios
+1. Gestion de usuarios
 
   - Sistema de roles
   - Registro / Login social (facebook, google)
 
-- Gestion de productos
+
+2. Gestion de productos
   
   - Asociados con una categoría
   - Asociados con un proveedor
   - Pueden tener diferentes opciones con attributos diferentes (talla, color, precio y referencia (OEM))
   - Creación de etiquetas para los artículos
 
-- Gestion de entrada de mercancía
+
+3. Gestion de entrada de mercancía
 
   - Crear entrada de mercancia de proveedores introduciendo la factura 
 
-- Facturación
+
+4. Facturación
 
   - Creación de facturas de los envíos pagados
   - Creación de facturas de los tickets que se realicen en la tienda física
