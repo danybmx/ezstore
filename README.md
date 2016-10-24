@@ -28,7 +28,7 @@ tienda de forma física.
 
 ###Facturación
 
-  - Creación de facturas de los envíos pagados
+  - Creación de facturas de los pedido pagados y completados
   - Creación de facturas de los tickets que se realicen en la tienda física
   - Creación de listado trimestral de facturas
   - Creación de listado anual de facturas
