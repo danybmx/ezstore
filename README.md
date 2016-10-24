@@ -62,11 +62,11 @@ El proyecto se dividirá en tres partes:
   - Se creará una aplicación web utilizando Electron que se comunicará con la API Rest para obtener y enviar
   información. Desde ella se podra:
 
-      # CRUD de productos
-      # CRUD de usuarios
-      # CRUD de entrada de mercancía así como marcar la mercancía como recibida
-      # CRUD de pedidos
-      # Gestión de ventás de forma física
+      - CRUD de productos
+      - CRUD de usuarios
+      - CRUD de entrada de mercancía así como marcar la mercancía como recibida
+      - CRUD de pedidos
+      - Gestión de ventás de forma física
 
 ## Ampliación
 
