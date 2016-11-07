@@ -1,0 +1,23 @@
+group 'ezstore'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // WS
+    compile 'javax:javaee-api:7.0'
+    compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+
+    // JPA
+    compile 'javax.persistence:persistence-api:1.0.2'
+
+    // Hibernate
+    compile 'org.hibernate:hibernate-core:5.2.3.Final'
+    compile 'org.hibernate:hibernate-entitymanager:5.2.3.Final'
+
+}
