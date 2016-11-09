@@ -4,6 +4,7 @@ import ezstore.entities.Product;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,7 +20,7 @@ public class ProductsService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Product> getProducts() {
-        return (List<Product>) em.createQuery("SELECT r FROM Product r").getResultList();
+        return em.createQuery("SELECT r FROM Product r", Product.class).getResultList();
     }
 
     @GET
