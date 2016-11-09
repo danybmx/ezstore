@@ -19,7 +19,7 @@ public class StorageService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Storage> getStorages() {
-        return (List<Storage>) em.createQuery("SELECT r FROM Storage r").getResultList();
+        return em.createQuery("SELECT r FROM Storage r", Storage.class).getResultList();
     }
 
     @GET

@@ -1,0 +1,34 @@
+version: '2'
+
+services:
+    mysql:
+        image: mysql:latest
+        container_name: database
+        environment:
+            MYSQL_DATABASE: ezstore 
+            MYSQL_USER: ezstore
+            MYSQL_PASSWORD: eZ$T0r3
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql-data:/var/lib/mysql
+        
+    wildfly:
+        build: .
+        container_name: wildfly
+        environment:
+            DATASTORE_NAME: ezstoreDS
+            DATASTORE_URL: jdbc:mysql://database/ezstore
+            DATASTORE_USER: ezstore
+            DATASTORE_PASS: eZ$T0r3
+        ports:
+            - "8080:8080"
+            - "9990:9990"
+        volumes:
+            - ./deployments:/opt/jboss/wildfly/standalone/deployments
+
+volumes:
+    mysql-data:
+        driver: local
+

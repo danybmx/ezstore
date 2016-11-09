@@ -1,6 +1,8 @@
 package ezstore.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "stock")
@@ -15,6 +17,11 @@ public class Stock {
     private Storage storage;
 
     private int units;
+
+    public Stock(Storage storage, int units) {
+        this.storage = storage;
+        this.units = units;
+    }
 
     public Stock() {
     }
