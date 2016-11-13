@@ -1,5 +1,8 @@
 package ezstore.entities;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -15,9 +18,16 @@ public class Product {
     private String description;
     private String price;
 
-    @OneToMany(targetEntity = ProductOption.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = ProductOption.class, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "productId")
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<ProductOption> options;
+
+    @OneToMany(targetEntity = ProductImage.class, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "productId")
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<ProductImage> images;
+
 
     public Product() {
     }
@@ -60,5 +70,13 @@ public class Product {
 
     public void setOptions(List<ProductOption> options) {
         this.options = options;
+    }
+
+    public List<ProductImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ProductImage> images) {
+        this.images = images;
     }
 }
