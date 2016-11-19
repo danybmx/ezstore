@@ -4,6 +4,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,20 +15,21 @@ public class ProductOption {
     @GeneratedValue
     private Long id;
 
-    private String EAN;
+    private String ean;
     private String reference;
     private String name;
     private Double price;
+    private int discount;
 
-    @OneToMany(targetEntity = Stock.class, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = Stock.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "optionId")
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<Stock> stock;
+    private List<Stock> stock = new ArrayList<>();
 
-    @OneToMany(targetEntity = ProductImage.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany(targetEntity = ProductImage.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "optionId")
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<ProductImage> images;
+    private List<ProductImage> images = new ArrayList<>();
 
     public ProductOption() {
     }
@@ -40,12 +42,12 @@ public class ProductOption {
         this.id = id;
     }
 
-    public String getEAN() {
-        return EAN;
+    public String getEan() {
+        return ean;
     }
 
-    public void setEAN(String EAN) {
-        this.EAN = EAN;
+    public void setEan(String ean) {
+        this.ean = ean;
     }
 
     public String getReference() {
@@ -88,4 +90,11 @@ public class ProductOption {
         this.images = images;
     }
 
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
 }

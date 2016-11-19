@@ -1,9 +1,13 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,18 +20,31 @@ public class Product {
 
     private String name;
     private String description;
-    private String price;
+    private Double price = 0.0;
 
-    @OneToMany(targetEntity = ProductOption.class, cascade = CascadeType.REMOVE)
+    @OneToMany(targetEntity = ProductOption.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "productId")
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<ProductOption> options;
+    private List<ProductOption> options = new ArrayList<>();
 
-    @OneToMany(targetEntity = ProductImage.class, cascade = CascadeType.REMOVE)
+    @OneToMany(targetEntity = ProductImage.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "productId")
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<ProductImage> images;
+    private List<ProductImage> images = new ArrayList<>();
 
+    @PrePersist
+    @PreUpdate
+    public void updatePrice() {
+        Double lowerPrice = null;
+        if (this.options != null) {
+            for (ProductOption po : this.options) {
+                if (lowerPrice == null || lowerPrice > po.getPrice()) {
+                    lowerPrice = po.getPrice();
+                }
+            }
+        }
+        this.price = lowerPrice;
+    }
 
     public Product() {
     }
@@ -56,11 +73,11 @@ public class Product {
         this.description = description;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

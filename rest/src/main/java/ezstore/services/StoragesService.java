@@ -11,7 +11,7 @@ import java.util.List;
 
 @Path("/storages")
 @Transactional
-public class StorageService {
+public class StoragesService {
 
     @PersistenceContext
     private EntityManager em;

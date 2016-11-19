@@ -16,8 +16,20 @@ dependencies {
     // JPA
     compile 'javax.persistence:persistence-api:1.0.2'
 
+    // Json
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
+
     // Hibernate
     compile 'org.hibernate:hibernate-core:5.2.3.Final'
     compile 'org.hibernate:hibernate-entitymanager:5.2.3.Final'
+}
 
+task buildAndDeploy(type: War) {
+    destinationDir = file('../deployments')
+    archiveName = 'ezstore-rest.war'
+
+    // Exclude dom4j because it's included with WildFly container
+    classpath = classpath.filter { File file ->
+        return file.name != 'dom4j-1.6.1.jar'
+    }
 }
