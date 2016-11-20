@@ -6,21 +6,21 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "products_brands")
+@Table(name = "product_brands")
 public class ProductBrand {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    private String key;
+    private String url;
     private String name;
 
     public ProductBrand() {
     }
 
     public ProductBrand(String key, String name) {
-        this.key = key;
+        this.url = key;
         this.name = name;
     }
 
@@ -32,12 +32,12 @@ public class ProductBrand {
         this.id = id;
     }
 
-    public String getKey() {
-        return key;
+    public String getUrl() {
+        return url;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getName() {

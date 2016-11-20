@@ -1,11 +1,9 @@
 package ezstore.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "order_products")
 public class OrderProduct {
 
     @Id
@@ -15,11 +13,17 @@ public class OrderProduct {
     private String reference;
     private String ean;
     private String name;
+    private String image;
     private Double discount;
     private Double price;
 
-    private Long productId;
-    private Long optionId;
+    @OneToOne(targetEntity = Product.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "productId")
+    private Product product;
+
+    @OneToOne(targetEntity = ProductOption.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "optionId")
+    private Product option;
 
     public OrderProduct() {
     }
@@ -72,20 +76,27 @@ public class OrderProduct {
         this.price = price;
     }
 
-    public Long getProductId() {
-        return productId;
+    public String getImage() {
+        return image;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public Long getOptionId() {
-        return optionId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setOptionId(Long optionId) {
-        this.optionId = optionId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
+    public Product getOption() {
+        return option;
+    }
+
+    public void setOption(Product option) {
+        this.option = option;
+    }
 }

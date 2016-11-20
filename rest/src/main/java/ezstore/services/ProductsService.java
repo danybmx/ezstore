@@ -53,7 +53,7 @@ public class ProductsService {
 
         }
 
-        return ErrorHelper.createRequest(Response.Status.BAD_REQUEST);
+        return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
 
     }
 

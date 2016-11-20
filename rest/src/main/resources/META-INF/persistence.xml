@@ -7,7 +7,13 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:/ezstoreDS</jta-data-source>
 
+        <class>ezstore.entities.Address</class>
+        <class>ezstore.entities.Order</class>
+        <class>ezstore.entities.OrderProduct</class>
         <class>ezstore.entities.Product</class>
+        <class>ezstore.entities.ProductBrand</class>
+        <class>ezstore.entities.ProductCategory</class>
+        <class>ezstore.entities.ProductImage</class>
         <class>ezstore.entities.ProductOption</class>
         <class>ezstore.entities.Stock</class>
         <class>ezstore.entities.Storage</class>

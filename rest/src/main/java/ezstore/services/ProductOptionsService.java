@@ -32,7 +32,7 @@ public class ProductOptionsService {
             return Response.ok(product.getOptions()).build();
         }
 
-        return ErrorHelper.createRequest(Response.Status.NOT_FOUND);
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
     @POST
@@ -66,11 +66,11 @@ public class ProductOptionsService {
 
                 return Response.ok(productOption).build();
             } else {
-                return ErrorHelper.createRequest(Response.Status.BAD_REQUEST);
+                return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
             }
         }
 
-        return ErrorHelper.createRequest(Response.Status.NOT_FOUND);
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
     @PUT
@@ -97,16 +97,16 @@ public class ProductOptionsService {
 
                 return Response.ok(productOption).build();
             } else {
-                return ErrorHelper.createRequest(Response.Status.BAD_REQUEST);
+                return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
             }
         }
 
-        return ErrorHelper.createRequest(Response.Status.NOT_FOUND);
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
     @DELETE
     @Path("/{id}")
     public Response removeProductOption() {
-        return ErrorHelper.createRequest(Response.Status.NOT_IMPLEMENTED);
+        return ErrorHelper.createResponse(Response.Status.NOT_IMPLEMENTED);
     }
 }

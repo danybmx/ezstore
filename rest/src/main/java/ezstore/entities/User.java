@@ -1,6 +1,7 @@
 package ezstore.entities;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -11,9 +12,20 @@ public class User {
     @GeneratedValue
     private Long id;
 
+    // Unique email
+    @Column(unique = true)
     private String email;
+
+    // Security related fields
     private String password;
-    private String salt;
+    private String token;
+
+    private String firstName;
+    private String lastName;
+    private String phone;
+    private Date bornDate;
+
+    private String VAT;
 
     @OneToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "defaultBillingAddressId")
@@ -54,11 +66,75 @@ public class User {
         this.password = password;
     }
 
-    public String getSalt() {
-        return salt;
+    public String getToken() {
+        return token;
     }
 
-    public void setSalt(String salt) {
-        this.salt = salt;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Date getBornDate() {
+        return bornDate;
+    }
+
+    public void setBornDate(Date bornDate) {
+        this.bornDate = bornDate;
+    }
+
+    public String getVAT() {
+        return VAT;
+    }
+
+    public void setVAT(String VAT) {
+        this.VAT = VAT;
+    }
+
+    public Address getDefaultBillingAddress() {
+        return defaultBillingAddress;
+    }
+
+    public void setDefaultBillingAddress(Address defaultBillingAddress) {
+        this.defaultBillingAddress = defaultBillingAddress;
+    }
+
+    public Address getDefaultShippingAddress() {
+        return defaultShippingAddress;
+    }
+
+    public void setDefaultShippingAddress(Address defaultShippingAddress) {
+        this.defaultShippingAddress = defaultShippingAddress;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 }
