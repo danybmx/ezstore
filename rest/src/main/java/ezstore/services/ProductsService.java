@@ -42,7 +42,7 @@ public class ProductsService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createProduct(ProductMessage productMessage) {
 
-        if (productMessage.isValid()) {
+        if (productMessage.validate().isValid()) {
 
             Product product = new Product();
             product.setName(productMessage.getName());
@@ -61,17 +61,17 @@ public class ProductsService {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Product updateProduct(@PathParam("id") Long id, ProductMessage productMessage) {
+    public Response updateProduct(@PathParam("id") Long id, ProductMessage productMessage) {
         Product product = em.find(Product.class, id);
 
         if (product != null) {
             product.setName(productMessage.getName());
             product.setDescription(productMessage.getDescription());
             em.merge(product);
-            return product;
+            return Response.ok(product).build();
         }
 
-        throw new NotFoundException();
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
     @DELETE

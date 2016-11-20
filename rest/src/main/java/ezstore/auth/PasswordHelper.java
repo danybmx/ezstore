@@ -1,16 +1,23 @@
 package ezstore.auth;
 
+import ezstore.entities.User;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.ws.rs.ServerErrorException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
-public abstract class AuthHelper {
+public abstract class PasswordHelper {
     private static final int TOKEN_SIZE = 128;
     private static final int SALT_SIZE = 32;
     private static final int KEY_SIZE = 256;
@@ -54,4 +61,5 @@ public abstract class AuthHelper {
             throw new IllegalStateException("Invalid SecretKeyFactory", ex);
         }
     }
+
 }

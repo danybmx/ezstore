@@ -1,11 +1,14 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
+@NamedQuery(name = "getUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
 public class User {
 
     @Id
@@ -17,6 +20,7 @@ public class User {
     private String email;
 
     // Security related fields
+    @JsonIgnore
     private String password;
     private String token;
 

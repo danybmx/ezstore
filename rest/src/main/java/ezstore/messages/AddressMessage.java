@@ -1,5 +1,7 @@
 package ezstore.messages;
 
+import ezstore.helpers.Validation;
+
 public class AddressMessage implements Message {
     private String name; // required
     private String line1; // required
@@ -78,14 +80,27 @@ public class AddressMessage implements Message {
     }
 
     @Override
-    public boolean isValid() {
-        boolean valid = true;
+    public Validation validate() {
+        Validation validation = new Validation();
 
-        if (this.name == null || this.name.trim().length() < 1) valid = false;
-        if (this.line1 == null || this.line1.trim().length() < 1) valid = false;
-        if (this.city == null || this.city.trim().length() < 1) valid = false;
-        if (this.country == null || this.country.trim().length() < 1) valid = false;
+        if (name == null || name.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("name", "Name cannot be empty");
+        }
+        if (line1 == null || line1.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("line1", "Address cannot be empty");
+        }
+        if (city == null || city.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("city", "City cannot be empty");
+        }
+        if (country == null || country.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("country", "Country cannot be empty");
+        }
 
-        return valid;
+        return validation;
     }
+
 }

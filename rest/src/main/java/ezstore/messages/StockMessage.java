@@ -1,5 +1,7 @@
 package ezstore.messages;
 
+import ezstore.helpers.Validation;
+
 public class StockMessage implements Message {
     private Long storage;
     private Long option;
@@ -33,13 +35,24 @@ public class StockMessage implements Message {
     }
 
     @Override
-    public boolean isValid() {
-        boolean valid = true;
+    public Validation validate() {
+        Validation validation = new Validation();
 
-        if (this.storage == null || this.storage < 1) valid = false;
-        if (this.option == null || this.option < 1) valid = false;
-        if (this.units == null) valid = false;
+        if (storage == null || storage < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("storage", "Storage must be defined");
+        }
 
-        return valid;
+        if (option == null || option < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("option", "Product option must be defined");
+        }
+
+        if (units == null) {
+            validation.setValid(false);
+            validation.getReasons().put("units", "Units cannot be blank");
+        }
+
+        return validation;
     }
 }

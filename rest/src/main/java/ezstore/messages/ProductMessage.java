@@ -1,6 +1,8 @@
 package ezstore.messages;
 
-public class ProductMessage {
+import ezstore.helpers.Validation;
+
+public class ProductMessage implements Message {
     private String name;
     private String description;
 
@@ -23,12 +25,19 @@ public class ProductMessage {
         this.description = description;
     }
 
-    public boolean isValid() {
-        boolean valid = true;
+    @Override
+    public Validation validate() {
+        Validation validation = new Validation();
 
-        if (this.name == null || this.name.length() < 1) { valid = false; }
-        if (this.description == null || this.description.length() < 1) { valid = false; }
+        if (name == null || name.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("name", "Name cannot be empty");
+        }
+        if (description == null || description.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("description", "Description cannot be empty");
+        }
 
-        return valid;
+        return validation;
     }
 }

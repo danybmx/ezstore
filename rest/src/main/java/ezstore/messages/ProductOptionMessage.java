@@ -1,6 +1,8 @@
 package ezstore.messages;
 
-public class ProductOptionMessage {
+import ezstore.helpers.Validation;
+
+public class ProductOptionMessage implements Message {
     private String name;
     private String EAN;
     private Double price;
@@ -47,5 +49,30 @@ public class ProductOptionMessage {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+
+    @Override
+    public Validation validate() {
+        Validation validation = new Validation();
+
+        if (name == null || name.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("name", "Name cannot be empty");
+        }
+        if (EAN == null || EAN.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("EAN", "EAN cannot be empty");
+        }
+        if (reference == null || reference.length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("reference", "Reference cannot be empty");
+        }
+        if (price == null || !(price > 0)) {
+            validation.setValid(false);
+            validation.getReasons().put("price", "Price should be higher than 0");
+        }
+
+        return validation;
     }
 }

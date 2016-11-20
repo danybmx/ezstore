@@ -1,5 +1,7 @@
 package ezstore.messages;
 
+import ezstore.helpers.Validation;
+
 public class StorageMessage implements Message {
     private String name;
 
@@ -14,13 +16,15 @@ public class StorageMessage implements Message {
         this.name = name;
     }
 
-
     @Override
-    public boolean isValid() {
-        boolean valid = true;
+    public Validation validate() {
+        Validation validation = new Validation();
 
-        if (this.name == null || this.name.trim().length() < 1) valid = false;
+        if (name == null || name.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("name", "Name cannot be empty");
+        }
 
-        return valid;
+        return validation;
     }
 }

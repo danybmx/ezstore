@@ -1,8 +1,9 @@
 package ezstore.services;
 
-import ezstore.auth.AuthHelper;
+import ezstore.auth.PasswordHelper;
 import ezstore.entities.User;
 import ezstore.helpers.ErrorHelper;
+import ezstore.helpers.Validation;
 import ezstore.messages.UserMessage;
 
 import javax.persistence.EntityManager;
@@ -24,14 +25,21 @@ public class UsersService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(UserMessage userMessage) {
 
-        if (userMessage.isValid()) {
+        if (userMessage != null) {
+            Validation validation = userMessage.validate();
 
-            User user = new User();
-            user.setEmail(userMessage.getEmail());
-            user.setPassword(AuthHelper.getSaltedHash(userMessage.getPassword()));
-            em.persist(user);
+            if (validation.isValid()) {
 
-            return Response.ok(user).build();
+                User user = new User();
+                user.setEmail(userMessage.getEmail());
+                user.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
+                em.persist(user);
+
+                return Response.ok(user).build();
+
+            } else {
+                return ErrorHelper.createResponse(validation);
+            }
 
         }
 

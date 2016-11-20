@@ -1,8 +1,10 @@
 package ezstore.messages;
 
+import ezstore.helpers.Validation;
+
 public class ProductCategoryMessage implements Message {
     private String name;
-    private String key;
+    private String URL;
 
     public ProductCategoryMessage() {
     }
@@ -15,21 +17,27 @@ public class ProductCategoryMessage implements Message {
         this.name = name;
     }
 
-    public String getKey() {
-        return key;
+    public String getURL() {
+        return URL;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setURL(String URL) {
+        this.URL = URL;
     }
 
     @Override
-    public boolean isValid() {
-        boolean valid = true;
+    public Validation validate() {
+        Validation validation = new Validation();
 
-        if (this.name == null || this.name.trim().length() < 1) valid = false;
-        if (this.key == null || this.key.length() < 1)  valid = false;
+        if (name == null || name.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("name", "Name cannot be empty");
+        }
+        if (URL == null || URL.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("URL", "URL cannot be empty");
+        }
 
-        return valid;
+        return validation;
     }
 }

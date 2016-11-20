@@ -1,5 +1,7 @@
 package ezstore.messages;
 
+import ezstore.helpers.Validation;
+
 public interface Message {
-    boolean isValid();
+    Validation validate();
 }

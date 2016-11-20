@@ -1,21 +1,17 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.AuthHelper;
+import ezstore.auth.PasswordHelper;
 import ezstore.entities.User;
 import ezstore.helpers.ErrorHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.*;
-import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.Random;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 @Path("/auth")
@@ -59,14 +55,14 @@ public class AuthService {
                     return ErrorHelper.createResponse(Response.Status.FORBIDDEN, "User not found");
                 }
 
-                if (!AuthHelper.check(password, user.getPassword())) {
+                if (!PasswordHelper.check(password, user.getPassword())) {
                     logger.info("Wrong password logging in " + email);
                     return ErrorHelper.createResponse(Response.Status.FORBIDDEN, "Wrong password");
                 }
 
                 // Create a new connection token
                 logger.info("User logged " + email + " in");
-                user.setToken(AuthHelper.getConnectionToken());
+                user.setToken(PasswordHelper.getConnectionToken());
                 em.persist(user);
 
                 return Response.ok("{\"token\": \"" + user.getToken() + "\"}", MediaType.APPLICATION_JSON).build();

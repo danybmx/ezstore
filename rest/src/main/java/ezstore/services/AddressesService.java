@@ -2,20 +2,24 @@ package ezstore.services;
 
 import ezstore.annotations.Secured;
 import ezstore.entities.Address;
+import ezstore.helpers.AuthorizedServiceHelper;
 import ezstore.helpers.ErrorHelper;
 import ezstore.messages.AddressMessage;
+import ezstore.helpers.Validation;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-@Path("addresses")
 @Secured
-public class AddressesService {
+@Transactional
+@Path("addresses")
+public class AddressesService extends AuthorizedServiceHelper {
 
     @Context
     private SecurityContext securityContext;
@@ -24,35 +28,49 @@ public class AddressesService {
     private EntityManager em;
 
     @GET
+    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserAddresses() {
-        return ErrorHelper.createResponse(Response.Status.NOT_IMPLEMENTED);
+        return Response.ok(getCurrentUser().getAddresses()).build();
     }
 
     @POST
+    @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createProduct(AddressMessage message) {
+    public Response createAddress(AddressMessage message) {
 
-        if (message.isValid()) {
+        Validation validation = message.validate();
 
-            Address address = new Address();
-            address.setName(message.getName());
-            address.setLine1(message.getLine1());
-            address.setLine2(message.getLine2());
-            address.setLine3(message.getLine3());
-            address.setCity(message.getCity());
-            address.setState(message.getState());
-            address.setCountry(message.getCountry());
-            address.setPostalCode(message.getPostalCode());
+        if (validation.isValid()) {
+
+            Address address = new Address(message);
             em.persist(address);
+
+            getCurrentUser().getAddresses().add(address);
 
             return Response.ok(address).build();
 
         }
 
-        return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+        return ErrorHelper.createResponse(validation);
+    }
 
+    @PUT
+    @Secured
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateAddress(@PathParam("id") Long id, AddressMessage message) {
+        Address address = em.find(Address.class, id);
+
+        if (address != null) {
+            address.applyMessage(message);
+            em.merge(address);
+            return Response.ok(address).build();
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
 

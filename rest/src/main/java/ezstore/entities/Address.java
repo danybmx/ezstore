@@ -1,5 +1,7 @@
 package ezstore.entities;
 
+import ezstore.messages.AddressMessage;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -23,6 +25,10 @@ public class Address {
     private String postalCode;
 
     public Address() {
+    }
+
+    public Address(AddressMessage message) {
+        this.applyMessage(message);
     }
 
     public String getName() {
@@ -97,7 +103,7 @@ public class Address {
         this.postalCode = postalCode;
     }
 
-    public String getAddress() {
+    public String getFullAddress() {
         String address = this.line1;
         if (this.line2 != null) {
             address += "\r\n" + this.line2;
@@ -114,5 +120,16 @@ public class Address {
         }
         address += "\r\n" + this.country;
         return address;
+    }
+
+    public void applyMessage(AddressMessage message) {
+        this.name = message.getName();
+        this.line1 = message.getLine1();
+        this.line2 = message.getLine2();
+        this.line3 = message.getLine3();
+        this.city = message.getCity();
+        this.state = message.getState();
+        this.country = message.getCountry();
+        this.postalCode = message.getPostalCode();
     }
 }
