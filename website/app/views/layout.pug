@@ -1,0 +1,14 @@
+html
+  head
+    title Flybikes
+    link(rel="stylesheet", type="text/css", href="css/bundle.css")
+
+  body
+    h1 Flybikes Website
+    block content
+
+    script(src="js/bundle.js")
+
+    if process.env.NODE_ENV !== 'production'
+      script(id="__bs_script__").
+        document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.17.0'><\/script>".replace("HOST", location.hostname));
