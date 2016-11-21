@@ -1,7 +1,10 @@
-homePage = () => {
-  this.render('')
-}
+const router = require('koa-router')();
 
-module.exports = (router) => {
-  router.get('/', homePage)
-}
+router.get('/', function* () {
+  this.render('home/index');
+});
+
+module.exports = {
+    path: '',
+    router: router,
+};

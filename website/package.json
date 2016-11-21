@@ -12,17 +12,25 @@
   "keywords": [],
   "author": "Daniel Rodríguez <daniel@dpstudios.es>",
   "dependencies": {
-    "koa": "^1.2.4",
-    "koa-router": "^5.4.0",
+    "browserify": "^13.1.0",
+    "chalk": "^1.1.3",
+    "dotenv": "^2.0.0",
+    "glob": "^7.1.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-rename": "^1.2.2",
     "gulp-stylus": "^2.5.0",
     "gulp-util": "^3.0.7",
-    "dotenv": "^2.0.0",
-    "browserify": "^13.1.0",
-    "chalk": "^1.1.3",
+    "koa": "^1.2.4",
+    "koa-pug": "^3.0.0-1",
+    "koa-router": "^5.4.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.2",
+    "eslint": "^3.10.2",
+    "eslint-config-google": "^0.7.0",
+    "nodemon": "^1.11.0"
   }
 }

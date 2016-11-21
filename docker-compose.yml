@@ -16,7 +16,7 @@ services:
         
     wildfly:
         build: .
-        container_name: wildfly
+        container_name: api
         environment:
             DATASTORE_NAME: ezstoreDS
             DATASTORE_URL: jdbc:mysql://database/ezstore
@@ -27,6 +27,20 @@ services:
             - "9990:9990"
         volumes:
             - ./deployments:/opt/jboss/wildfly/standalone/deployments
+        links:
+            - mysql
+
+    website:
+        image: node:latest
+        container_name: website
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./website:/app
+        working_dir: /app
+        command: bash utils/start.sh
+        links:
+            - wildfly
 
 volumes:
     mysql-data:

@@ -52,7 +52,9 @@ gulp.task('init-browserSync', () => {
   browserSync = require('browser-sync').create();
 
   // Initialize browserSync
-  browserSync.init({});
+  browserSync.init({
+    port: 3001,
+  });
 });
 
 /**
@@ -100,7 +102,8 @@ gulp.task('dev', ['init-browserSync', 'styles', 'scripts'], () => {
 /**
  * Scripts task
  * -------
- * Browserify and babelify the scripts used in ${scriptsPath}/main.js to ${destPath}/js/bundle.js
+ * Browserify and babelify the scripts used in ${scriptsPath}/main.js
+ * to ${destPath}/js/bundle.js.
  * Also launch browserSync stream if we're watching
  */
 gulp.task('scripts', () => {
@@ -122,7 +125,8 @@ gulp.task('scripts', () => {
 /**
  * Styles task
  * -------
- * Preprocess the file ${stylesPath}/main.stylus and compile it to ${destPath}/css/bundle.css
+ * Preprocess the file ${stylesPath}/main.stylus and compile it
+ * to ${destPath}/css/bundle.css.
  * Also launch browserSync stream if we're watching
  */
 gulp.task('styles', () => {

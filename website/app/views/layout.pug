@@ -1,14 +1,14 @@
 html
   head
-    title Flybikes
+    title ezStore
     link(rel="stylesheet", type="text/css", href="css/bundle.css")
 
   body
-    h1 Flybikes Website
+    h1 ezStore
     block content
 
     script(src="js/bundle.js")
 
     if process.env.NODE_ENV !== 'production'
       script(id="__bs_script__").
-        document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.17.0'><\/script>".replace("HOST", location.hostname));
+        document.write("<script async src='http://HOST:3001/browser-sync/browser-sync-client.js?v=2.17.0'><\/script>".replace("HOST", location.hostname));
