@@ -3,7 +3,7 @@ package ezstore.entities;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "products_images")
+@Table(name = "product_images")
 public class ProductImage {
 
     @Id

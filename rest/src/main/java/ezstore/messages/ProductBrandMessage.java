@@ -2,11 +2,11 @@ package ezstore.messages;
 
 import ezstore.helpers.Validation;
 
-public class ProductMessage implements Message {
+public class ProductBrandMessage implements Message {
     private String name;
-    private String description;
+    private String URL;
 
-    public ProductMessage() {
+    public ProductBrandMessage() {
     }
 
     public String getName() {
@@ -17,12 +17,12 @@ public class ProductMessage implements Message {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getURL() {
+        return URL;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setURL(String URL) {
+        this.URL = URL;
     }
 
     @Override
@@ -33,11 +33,12 @@ public class ProductMessage implements Message {
             validation.setValid(false);
             validation.getReasons().put("name", "Name cannot be empty");
         }
-        if (description == null || description.trim().length() < 1) {
+        if (URL == null || URL.trim().length() < 1) {
             validation.setValid(false);
-            validation.getReasons().put("description", "Description cannot be empty");
+            validation.getReasons().put("URL", "URL cannot be empty");
         }
 
         return validation;
     }
+
 }

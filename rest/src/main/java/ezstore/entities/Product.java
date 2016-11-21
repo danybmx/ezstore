@@ -32,6 +32,14 @@ public class Product {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<ProductImage> images = new ArrayList<>();
 
+    @OneToOne(targetEntity = ProductCategory.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoryId")
+    private ProductCategory category;
+
+    @OneToOne(targetEntity = ProductBrand.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "brandId")
+    private ProductBrand brand;
+
     @PrePersist
     @PreUpdate
     public void updatePrice() {
