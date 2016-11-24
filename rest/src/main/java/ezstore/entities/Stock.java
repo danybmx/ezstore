@@ -16,10 +16,6 @@ public class Stock {
     @JoinColumn(name = "storageId")
     private Storage storage;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "optionId")
-    private ProductOption option;
-
     private int units;
 
     public Stock(Storage storage, int units) {
