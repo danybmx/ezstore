@@ -20,6 +20,17 @@ controllers.forEach((file) => {
   router.use(controller.path, controller.router.routes());
 });
 
+// Add error handling middleware
+app.use(function* (next) {
+  try {
+    yield next;
+  } catch (err) {
+    this.status = err.status || 500;
+    this.body = err.message;
+    this.app.emit('error', err, this);
+  }
+});
+
 // Attach router to the app
 app
   .use(router.routes())

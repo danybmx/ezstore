@@ -3,13 +3,12 @@ const api = require('../providers/api');
 
 router.get('/', function* () {
   // Featured products
-  yield api.products.getAll()
-    .then((products) => {
-      this.render('home/index', {
-        products: products,
-      });
-    })
-    .catch(console.error);
+  try {
+    const products = yield api.products.getAll();
+    this.render('home/index', {products: products});
+  } catch (err) {
+    this.throw('Internal Server Error.', 500);
+  }
 });
 
 module.exports = {
