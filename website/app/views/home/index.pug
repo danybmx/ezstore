@@ -1,6 +1,11 @@
 extends ../layout
 
 append content
-  ul
+  div.products(style="font-family: monospace;")
     each product in products
-      li= product.name
+      h3(style="margin: 0px; padding: 0px;")= product.name + ' ( ' + product.price + '€ )'
+      div.options
+        each option in product.options
+          div= '····|____ ' + option.name + ' ( ' + option.price + '€ )'
+            each stock in option.stock
+              div= '·········|____' + stock.storage.name + ' - ' + stock.units

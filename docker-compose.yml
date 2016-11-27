@@ -5,7 +5,7 @@ services:
         image: mysql:latest
         container_name: database
         environment:
-            MYSQL_DATABASE: ezstore 
+            MYSQL_DATABASE: ezstore
             MYSQL_USER: ezstore
             MYSQL_PASSWORD: eZ$T0r3
             MYSQL_ROOT_PASSWORD: root
@@ -13,7 +13,7 @@ services:
             - "3306:3306"
         volumes:
             - mysql-data:/var/lib/mysql
-        
+
     wildfly:
         build: .
         container_name: api
@@ -45,4 +45,3 @@ services:
 volumes:
     mysql-data:
         driver: local
-

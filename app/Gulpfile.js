@@ -1,20 +1,18 @@
 const gulp = require('gulp');
-const stylus = require('gulp-stylus');
+const less = require('gulp-less');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
 const rename = require('gulp-rename');
-const dotenv = require('dotenv');
 const gutil = require('gulp-util');
 const chalk = require('chalk');
-
-// Load env file
-dotenv.load();
+const path = require('path');
 
 // Set paths
-const scriptsPath = 'app/resources/scripts';
-const stylesPath = 'app/resources/styles';
-const destPath = 'static';
+const srcPath = path.resolve('./src');
+const scriptsPath = srcPath + '/resources/scripts';
+const stylesPath = srcPath + '/resources/styles';
+const destPath = srcPath + '/static';
 
 // Just check if we're watching
 let browserSync;
@@ -42,61 +40,28 @@ const renderBrowserifyErrors = function(err) {
 };
 
 /**
- * Init browserSync task
- * ---------------------
- * Just initialize browserSync to get it ready for watch
+ * Dev task
+ * --------
+ * Watch styl and js files on ${stylesPath} & ${scriptsPath}, compile them
+ * and stream their changes to browserSync
  */
-gulp.task('init-browserSync', () => {
+gulp.task('dev', ['styles', 'scripts'], () => {
   // Set browserSync to the browserSync var
   // so we can verify if we're on "dev" task
   browserSync = require('browser-sync').create();
 
-  // Initialize browserSync
+  // Initialize browser-sync
   browserSync.init({
-    port: 3001,
-  });
-});
-
-/**
- * Dev task
- * --------
- * Starts the server with nodemon
- * Watch styl and js files on ${stylesPath} & ${scriptsPath}, compile them
- * and stream their changes to browserSync
- * Watch views and reload website using browserSync
- */
-gulp.task('dev', ['init-browserSync', 'styles', 'scripts'], () => {
-  const nodemon = require('nodemon');
-
-  // Nodemon
-  const monitor = nodemon({
-    script: './server.js',
-    watch: './app',
-    ignore: './app/resources/',
-    ext: 'js,pug',
-  });
-  process.on('SIGINT', () => {
-    monitor.on('exit', () => {
-      process.exit();
-    });
-  });
-
-  // Nodemon
-  gulp.watch('status', () => {
-    console.log('Nodemon restarted and server running again');
-    browserSync.reload();
+    serveStatic: ['./src/'],
+    files: srcPath + '/index.html',
+    port: 3000,
   });
 
   // Styles
-  gulp.watch(stylesPath + '/**/*.styl', ['styles']);
+  gulp.watch(stylesPath + '/**/*.less', ['styles']);
 
   // Scripts
   gulp.watch(scriptsPath + '/**/*.js', ['scripts']);
-
-  // Views
-  gulp.watch('app/views/**/*.pug', () => {
-    browserSync.reload();
-  });
 });
 
 /**
@@ -110,7 +75,7 @@ gulp.task('scripts', () => {
   const bundler = browserify(scriptsPath + '/main.js', {debug: true});
   const task = bundler
     .bundle()
-    .on('error', renderBrowserifyErrors)
+    // .on('error', renderBrowserifyErrors)
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(gulp.dest(destPath + '/js'));
@@ -125,16 +90,16 @@ gulp.task('scripts', () => {
 /**
  * Styles task
  * -------
- * Preprocess the file ${stylesPath}/main.stylus and compile it
+ * Preprocess the file ${stylesPath}/main.less and compile it
  * to ${destPath}/css/bundle.css.
  * Also launch browserSync stream if we're watching
  */
 gulp.task('styles', () => {
   let task;
 
-  task = gulp.src(stylesPath + '/main.styl')
-    .pipe(stylus({
-      compress: !isWatch(),
+  task = gulp.src(stylesPath + '/main.less')
+    .pipe(less({
+      paths: [path.join(srcPath, 'libs'), path.join(stylesPath, 'includes')],
     }))
     .pipe(rename('bundle.css'))
     .pipe(gulp.dest(destPath + '/css'));

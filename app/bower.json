@@ -1,0 +1,30 @@
+{
+  "name": "ezstore-management-app",
+  "description": "ezStore management app",
+  "main": "src/main.js",
+  "authors": [
+    "Daniel Rodríguez Gil <daniel@dpstudios.es>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ezStore",
+    "desktop-app",
+    "online",
+    "shop",
+    "management"
+  ],
+  "homepage": "https://github.com/danybmx/ezstore",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "angular": "^1.5.9",
+    "angular-route": "^1.5.9"
+  }
+}

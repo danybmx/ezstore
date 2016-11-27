@@ -1,13 +1,13 @@
 const router = require('koa-router')();
-const api = require('../providers/api');
+const productsApi = require('../api/products');
 
 router.get('/', function* () {
   // Featured products
   try {
-    const products = yield api.products.getAll();
+    const products = yield productsApi.all();
     this.render('home/index', {products: products});
   } catch (err) {
-    this.throw('Internal Server Error.', 500);
+    this.throw(err.message, 500);
   }
 });
 

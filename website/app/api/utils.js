@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-const apiAddress = 'http://api:8080/';
+const apiAddress = 'http://api:8080';
 
 const defaultOptions = {
   headers: {
@@ -11,6 +11,7 @@ const defaultOptions = {
 };
 
 const doRequest = (method, url, body, options) => {
+  if (!url.match(/^https?:\/\//)) url = apiAddress + url;
   if (typeof options === 'undefined' || options === null) options = {};
   options = Object.assign({}, defaultOptions, options);
   options.method = method;
@@ -39,10 +40,10 @@ const doDelete = (url, options) => {
   return doRequest('DELETE', url, null, options);
 };
 
-const products = {
-  getAll: () => doGet(apiAddress + 'products'),
-};
-
 module.exports = {
-  products: products,
+  doGet: doGet,
+  doPost: doPost,
+  doPut: doPut,
+  doDelete: doDelete,
+  doPatch: doPatch,
 };

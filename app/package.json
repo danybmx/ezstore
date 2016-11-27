@@ -1,0 +1,44 @@
+{
+  "name": "ezstore-management-app",
+  "version": "1.0.0",
+  "description": "ezStore management app",
+  "main": "src/main.js",
+  "scripts": {
+    "pack": "build --dir",
+    "dist": "build",
+    "dev": "gulp dev",
+    "start": "electron ."
+  },
+  "keywords": [
+    "ezStore",
+    "desktop-app",
+    "online shop",
+    "management"
+  ],
+  "author": "Daniel Rodríguez Gil <daniel@dpstudios.es>",
+  "license": "MIT",
+  "build": {
+    "appId": "es.dpstudios.ezstore-management",
+    "mac": {
+      "category": "Office"
+    }
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.2",
+    "browserify": "^13.1.1",
+    "chalk": "^1.1.3",
+    "electron": "^1.4.8",
+    "electron-builder": "^8.6.0",
+    "eslint": "^3.11.0",
+    "eslint-config-google": "^0.7.1",
+    "gulp": "^3.9.1",
+    "gulp-less": "^3.3.0",
+    "gulp-babel": "^6.1.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-util": "^3.0.7",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

@@ -13,22 +13,23 @@ const pug = new Pug({
 });
 pug.use(app);
 
-// Add controller routers to the router
-const controllers = glob.sync('./app/controllers/**/*.js');
-controllers.forEach((file) => {
-  controller = require(file);
-  router.use(controller.path, controller.router.routes());
-});
-
 // Add error handling middleware
 app.use(function* (next) {
   try {
     yield next;
   } catch (err) {
+    console.log(err);
     this.status = err.status || 500;
     this.body = err.message;
     this.app.emit('error', err, this);
   }
+});
+
+// Add controller routers to the router
+const controllers = glob.sync('./app/controllers/**/*.js');
+controllers.forEach((file) => {
+  controller = require(file);
+  router.use(controller.path, controller.router.routes());
 });
 
 // Attach router to the app

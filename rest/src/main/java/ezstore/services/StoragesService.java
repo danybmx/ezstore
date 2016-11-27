@@ -1,5 +1,8 @@
 package ezstore.services;
 
+import ezstore.entities.Product;
+import ezstore.entities.ProductOption;
+import ezstore.entities.Stock;
 import ezstore.entities.Storage;
 
 import javax.persistence.EntityManager;
@@ -37,9 +40,17 @@ public class StoragesService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Storage createStorage(Storage product) {
-        em.persist(product);
-        return product;
+    public Storage createStorage(Storage storage) {
+        em.persist(storage);
+
+        List<ProductOption> options = em.createQuery("SELECT o FROM ProductOption o", ProductOption.class).getResultList();
+        for (ProductOption option : options) {
+            Stock stock = new Stock(storage, 0);
+            option.getStock().add(stock);
+            em.persist(option);
+        }
+
+        return storage;
     }
 
     @PUT

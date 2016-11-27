@@ -1,0 +1,5 @@
+dist/
+node_modules/
+src/libs
+src/static/js/bundle.js
+src/static/css/bundle.css

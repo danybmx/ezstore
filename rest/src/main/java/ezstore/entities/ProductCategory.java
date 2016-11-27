@@ -13,14 +13,14 @@ public class ProductCategory {
     @GeneratedValue
     private Long id;
 
-    private String url;
+    private String URL;
     private String name;
 
     public ProductCategory() {
     }
 
-    public ProductCategory(String url, String name) {
-        this.url = url;
+    public ProductCategory(String URL, String name) {
+        this.URL = URL;
         this.name = name;
     }
 
@@ -32,12 +32,12 @@ public class ProductCategory {
         this.id = id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getURL() {
+        return URL;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setURL(String url) {
+        this.URL = url;
     }
 
     public String getName() {

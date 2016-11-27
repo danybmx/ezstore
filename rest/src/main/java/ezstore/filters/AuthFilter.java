@@ -1,4 +1,4 @@
-package ezstore.auth;
+package ezstore.filters;
 
 import ezstore.annotations.Secured;
 import ezstore.entities.User;

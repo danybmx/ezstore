@@ -12,8 +12,6 @@ public class ProductOptionMessage implements Message {
         boolean valid = true;
 
         if (this.name == null || this.name.length() < 1) { valid = false; }
-        if (this.EAN == null || this.EAN.length() < 1) { valid = false; }
-        if (this.reference == null || this.reference.length() < 1) { valid = false; }
         if (this.price == null || !(this.price > 0)) { valid = false; }
 
         return valid;

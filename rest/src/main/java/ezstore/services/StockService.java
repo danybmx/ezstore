@@ -1,54 +1,68 @@
 package ezstore.services;
 
-import ezstore.entities.Product;
 import ezstore.entities.ProductOption;
 import ezstore.entities.Stock;
+import ezstore.entities.Storage;
+import ezstore.helpers.ErrorHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
+import javax.ws.rs.core.Response;
 
-@Path("/stock")
+@Path("/products/{productId}/options/{optionId}/stock")
 @Transactional
 public class StockService {
 
     @PersistenceContext
     private EntityManager em;
 
-    @GET
-    @Path("/option/{storageId}/{optionId}")
+    @PUT
+    @Path("/{storageId}/{units}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Stock getOptionStock(@PathParam("optionId") Long optionId, @PathParam("storageId") Long storageId) {
-        return em.createQuery("SELECT u FROM Stock u WHERE u.storage.id = :optionId AND u.option.id = :storageId", Stock.class)
-                .setParameter("optionId", optionId)
-                .setParameter("storageId", storageId)
-                .getSingleResult();
-    }
+    public Stock setOptionStock(@PathParam("optionId") Long optionId, @PathParam("storageId") Long storageId, @PathParam("units") int units) {
+        ProductOption option = em.find(ProductOption.class, optionId);
 
-    @GET
-    @Path("/product/{storageId}/{productId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<Stock> getProductStock(@PathParam("productId") Long productId, @PathParam("storageId") Long storageId) {
-        List<Stock> productOptionsStock = new ArrayList<>();
-        Product product = em.find(Product.class, productId);
-
-        if (product != null) {
-            for (ProductOption productOption : product.getOptions()){
-                productOptionsStock.add(em.createQuery("SELECT u FROM Stock u WHERE u.storage.id = :optionId AND u.option.id = :storageId", Stock.class)
-                        .setParameter("optionId", productOption.getId())
-                        .setParameter("storageId", storageId)
-                        .getSingleResult());
+        if (option.getStock() != null) {
+            for (Stock stock: option.getStock()) {
+                if (stock.getStorage().getId().equals(storageId)) {
+                    stock.setUnits(units);
+                    em.persist(stock);
+                    return stock;
+                }
             }
         }
 
-        return productOptionsStock;
+        Storage storage = em.find(Storage.class, storageId);
+        Stock stock = new Stock(storage, units);
+        option.getStock().add(stock);
+        em.persist(option);
+
+        return stock;
     }
 
+    @GET
+    @Path("/{storageId}/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOptionStock(@PathParam("optionId") Long optionId, @PathParam("storageId") Long storageId) {
+        ProductOption option = em.find(ProductOption.class, optionId);
+        if (option.getStock() != null) {
+            for (Stock stock: option.getStock()) {
+                if (stock.getStorage().getId().equals(storageId)) {
+                    return Response.ok(stock).build();
+                }
+            }
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOptionStock(@PathParam("optionId") Long optionId) {
+        ProductOption option = em.find(ProductOption.class, optionId);
+        return Response.ok(option.getStock()).build();
+    }
 }
