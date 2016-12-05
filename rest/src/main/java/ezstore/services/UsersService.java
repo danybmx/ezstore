@@ -2,6 +2,7 @@ package ezstore.services;
 
 import ezstore.auth.PasswordHelper;
 import ezstore.entities.User;
+import ezstore.annotations.Secured;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
 import ezstore.messages.UserMessage;
@@ -10,6 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -47,5 +50,16 @@ public class UsersService {
 
     }
 
+    @GET
+    @Secured
+    @Path("/me")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCurrentUser(@Context SecurityContext securityContext) {
+      User user = em
+              .createQuery("SELECT u FROM User u WHERE u.email=:email", User.class)
+              .setParameter("email", securityContext.getUserPrincipal().getName())
+              .getSingleResult();
 
+      return Response.ok(user).build();
+    }
 }

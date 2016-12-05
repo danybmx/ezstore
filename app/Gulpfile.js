@@ -7,9 +7,15 @@ const rename = require('gulp-rename');
 const gutil = require('gulp-util');
 const chalk = require('chalk');
 const path = require('path');
+const concat = require('gulp-concat');
+const uglify = require('gulp-uglify');
+
+// Package.json
+const package = require('./package.json');
 
 // Set paths
 const srcPath = path.resolve('./src');
+const libsPath = srcPath + '/libs';
 const scriptsPath = srcPath + '/resources/scripts';
 const stylesPath = srcPath + '/resources/styles';
 const destPath = srcPath + '/static';
@@ -64,6 +70,14 @@ gulp.task('dev', ['styles', 'scripts'], () => {
   gulp.watch(scriptsPath + '/**/*.js', ['scripts']);
 });
 
+gulp.task('libraries', () => {
+  return gulp.src(package.includes.map((e) => { return libsPath + '/' + e }))
+    .pipe(concat('libs.js'))
+    .pipe(gulp.dest(destPath + '/js'))
+    .pipe(uglify())
+    .pipe(gulp.dest(destPath + '/js'));
+});
+
 /**
  * Scripts task
  * -------
@@ -72,10 +86,11 @@ gulp.task('dev', ['styles', 'scripts'], () => {
  * Also launch browserSync stream if we're watching
  */
 gulp.task('scripts', () => {
-  const bundler = browserify(scriptsPath + '/main.js', {debug: true});
+  const bundler = browserify(scriptsPath + '/main.js', {debug: true})
+    .transform('babelify', { presets: ['latest'] });
   const task = bundler
     .bundle()
-    // .on('error', renderBrowserifyErrors)
+    .on('error', renderBrowserifyErrors)
     .pipe(source('bundle.js'))
     .pipe(buffer())
     .pipe(gulp.dest(destPath + '/js'));

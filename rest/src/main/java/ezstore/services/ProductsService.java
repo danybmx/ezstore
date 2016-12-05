@@ -1,6 +1,8 @@
 package ezstore.services;
 
 import ezstore.entities.Product;
+import ezstore.entities.ProductBrand;
+import ezstore.entities.ProductCategory;
 import ezstore.helpers.ErrorHelper;
 import ezstore.messages.ProductMessage;
 
@@ -67,6 +69,8 @@ public class ProductsService {
         if (product != null) {
             product.setName(productMessage.getName());
             product.setDescription(productMessage.getDescription());
+            product.setBrand(em.find(ProductBrand.class, productMessage.getBrandId()));
+            product.setCategory(em.find(ProductCategory.class, productMessage.getCategoryId()));
             em.merge(product);
             return Response.ok(product).build();
         }

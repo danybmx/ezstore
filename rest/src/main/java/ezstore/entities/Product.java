@@ -104,4 +104,20 @@ public class Product {
     public void setImages(List<ProductImage> images) {
         this.images = images;
     }
+
+    public ProductCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProductCategory category) {
+        this.category = category;
+    }
+
+    public ProductBrand getBrand() {
+        return brand;
+    }
+
+    public void setBrand(ProductBrand brand) {
+        this.brand = brand;
+    }
 }

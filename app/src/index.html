@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="UTF-8">
     <title>ezStore Management</title>
-    <link rel="stylesheet" href="static/css/bundle.css" />
-  </head>
-  <body ng-cloak>
+    <link rel="stylesheet" href="static/css/bundle.css"/>
+</head>
+<body ng-cloak>
     <div id="login-wrapper" ng-if="!isAuth()">
         <div class="container-fluid" ng-view></div>
     </div>
@@ -29,7 +29,8 @@
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> John Smith <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{user.email}} <b
+                            class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="#/logout"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
@@ -41,19 +42,19 @@
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav side-nav">
-                    <li class="active">
+                    <li ng-class="{active: controller == 'dashboardController'}">
                         <a href="#/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
-                    <li>
+                    <li ng-class="{active: controller == 'productsController'}">
                         <a href="#/products"><i class="fa fa-fw fa-star"></i> Products</a>
                     </li>
-                    <li>
+                    <li ng-class="{active: controller == 'ordersController'}">
                         <a href="#/orders"><i class="fa fa-fw fa-dropbox"></i> Orders</a>
                     </li>
-                    <li>
+                    <li ng-class="{active: controller == 'usersController'}">
                         <a href="#/users"><i class="fa fa-fw fa-users"></i> Users</a>
                     </li>
-                    <li>
+                    <li ng-class="{active: controller == 'storagesController'}">
                         <a href="#/storages"><i class="fa fa-fw fa-th-large"></i> Storages</a>
                     </li>
                 </ul>
@@ -69,22 +70,18 @@
 
     </div>
 
-    <!-- jQuery -->
-    <script src="libs/jquery/dist/jquery.js"></script>
-
-    <!-- Bootstrap -->
-    <script src="libs/bootstrap/dist/js/bootstrap.min.js"></script>
-
-    <!-- Angular -->
-    <script src="libs/angular/angular.js"></script>
-    <script src="libs/angular-route/angular-route.js"></script>
+    <!-- Libraries -->
+	<script src="static/js/libs.js"></script>
 
     <!-- Bundle -->
     <script src="static/js/bundle.js"></script>
 
     <!-- BrowserSync -->
     <script id="__bs_script__">
-      document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.2'><\/script>".replace("HOST", location.hostname));
+        document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.2'><\/script>".replace("HOST", location.hostname));
     </script>
-  </body>
+
+	<!-- Insert this line after script imports -->
+<script>if (window.module) module = window.module;</script>
+</body>
 </html>
