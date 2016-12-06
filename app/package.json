@@ -46,6 +46,7 @@
     "electron-builder": "^8.6.0",
     "eslint": "^3.11.0",
     "eslint-config-google": "^0.7.1",
+    "font-awesome": "^4.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-concat": "^2.6.1",
