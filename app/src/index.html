@@ -45,8 +45,25 @@
                     <li ng-class="{active: controller == 'dashboardController'}">
                         <a href="#/"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
-                    <li ng-class="{active: controller == 'productsController'}">
-                        <a href="#/products"><i class="fa fa-fw fa-star"></i> Products</a>
+                    <li>
+                        <a href="javascript:;" ng-click="catalogNav = !!!catalogNav">
+							<span class="pull-right">
+								<i class="fa fa-angle-down" ng-if="!catalogNav"></i>
+								<i class="fa fa-angle-up" ng-if="catalogNav"></i>
+							</span>
+							<i class="fa fa-fw fa-book"></i> Catalog
+						</a>
+						<ul id="catalogNav" class="subnav" ng-class="{collapse: catalogNav != true}">
+							<li>
+								<a href="#/products"><i class="fa fa-fw fa-star"></i> Products</a>
+							</li>
+							<li>
+								<a href="#/categories"><i class="fa fa-fw fa-folder"></i> Categories</a>
+							</li>
+							<li>
+								<a href="#/brands"><i class="fa fa-fw fa-tag"></i> Brands</a>
+							</li>
+						</ul>
                     </li>
                     <li ng-class="{active: controller == 'ordersController'}">
                         <a href="#/orders"><i class="fa fa-fw fa-dropbox"></i> Orders</a>
@@ -70,18 +87,11 @@
 
     </div>
 
-    <!-- Libraries -->
+	<!-- Libs -->
 	<script src="static/js/libs.js"></script>
 
     <!-- Bundle -->
     <script src="static/js/bundle.js"></script>
 
-    <!-- BrowserSync -->
-    <script id="__bs_script__">
-        document.write("<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.2'><\/script>".replace("HOST", location.hostname));
-    </script>
-
-	<!-- Insert this line after script imports -->
-<script>if (window.module) module = window.module;</script>
 </body>
 </html>

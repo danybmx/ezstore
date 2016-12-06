@@ -15,6 +15,21 @@ module.exports = {
     controller: 'productsController',
   },
 
+  /****************/
+  /** Categories **/
+  /****************/
+  '/categories': {
+    templateUrl: 'static/views/categories/index.html',
+    controller: 'categoriesController',
+  },
+
+  /************/
+  /** Brands **/
+  /************/
+  '/brands': {
+    templateUrl: 'static/views/brands/index.html',
+    controller: 'brandsController',
+  },
   /**********/
   /** Auth **/
   /**********/

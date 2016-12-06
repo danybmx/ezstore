@@ -80,8 +80,8 @@ gulp.task('dev', ['styles', 'scripts'], () => {
  * Concat all the third party dependencies and uglify them
  */
 gulp.task('scripts.libraries', () => {
-  browserify(scriptsPath + '/libs.js', {debug: true})
-    .transform('babelify', { presets: ['latest'] })
+  browserify(scriptsPath + '/libs.js', { debug: true })
+    // .transform('babelify', { presets: ['latest'], debug: false })
     .bundle()
     .on('error', renderBrowserifyErrors)
     .pipe(source('libs.js'))
@@ -97,16 +97,13 @@ gulp.task('scripts.libraries', () => {
  * Also launch browserSync stream if we're watching
  */
 gulp.task('scripts', () => {
-  browserify(scriptsPath + '/main.js', {debug: true})
-    .transform('babelify', { presets: ['latest'] })
-    .bundle()
-    .on('error', renderBrowserifyErrors)
-    .pipe(source('app.js'))
-    .pipe(buffer())
-    .pipe(gulp.dest(destPath + '/js'))
+  const bundler = browserify(scriptsPath + '/main.js', { debug: ! process.env == 'production' })
+    .transform('babelify', { presets: ['latest'] });
 
-  const task = gulp.src([destPath + '/js/libs.js', destPath + '/js/app.js'])
-    .pipe(concat('bundle.js'))
+  const task = bundler.bundle()
+    .on('error', renderBrowserifyErrors)
+    .pipe(source('bundle.js'))
+    .pipe(buffer())
     .pipe(gulp.dest(destPath + '/js'));
 
   if (isWatch()) {
@@ -147,6 +144,7 @@ gulp.task('styles', () => {
  * - sass
  */
 gulp.task('build', [
+  'scripts.libraries',
   'scripts',
   'styles',
 ]);

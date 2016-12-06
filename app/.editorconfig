@@ -23,3 +23,6 @@ spaces_in_brackets = false
 trim_trailing_whitespace = true
 indent_style = tab
 indent_size = 4
+
+[**.less]
+intent_size = 4

@@ -17,7 +17,7 @@ module.exports = function($rootScope, $http) {
     update: (id, product) => {
       return $http.put(apiAddress + '/products/' + id, product, options);
     }
-  }
+  };
 
   this.categories = {
     all: () => {
@@ -25,7 +25,7 @@ module.exports = function($rootScope, $http) {
     },
     create: () => {
     }
-  }
+  };
 
   this.brands = {
     all: () => {

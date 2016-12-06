@@ -5,6 +5,7 @@ import ezstore.helpers.Validation;
 public class ProductBrandMessage implements Message {
     private String name;
     private String URL;
+    private boolean visible = true;
 
     public ProductBrandMessage() {
     }
@@ -23,6 +24,14 @@ public class ProductBrandMessage implements Message {
 
     public void setURL(String URL) {
         this.URL = URL;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     @Override
