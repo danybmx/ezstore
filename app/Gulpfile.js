@@ -14,6 +14,7 @@ const uglify = require('gulp-uglify');
 const package = require('./package.json');
 
 // Set paths
+const rootPath = path.resolve('./');
 const srcPath = path.resolve('./src');
 const libsPath = srcPath + '/libs';
 const scriptsPath = srcPath + '/resources/scripts';
@@ -68,13 +69,23 @@ gulp.task('dev', ['styles', 'scripts'], () => {
 
   // Scripts
   gulp.watch(scriptsPath + '/**/*.js', ['scripts']);
+
+  // Libraries
+  gulp.watch(scriptsPath + '/libs.js', ['scripts.libraries', 'scripts']);
 });
 
-gulp.task('libraries', () => {
-  return gulp.src(package.includes.map((e) => { return libsPath + '/' + e }))
-    .pipe(concat('libs.js'))
-    .pipe(gulp.dest(destPath + '/js'))
-    .pipe(uglify())
+/**
+ * Scripts libraries task
+ * -------
+ * Concat all the third party dependencies and uglify them
+ */
+gulp.task('scripts.libraries', () => {
+  browserify(scriptsPath + '/libs.js', {debug: true})
+    .transform('babelify', { presets: ['latest'] })
+    .bundle()
+    .on('error', renderBrowserifyErrors)
+    .pipe(source('libs.js'))
+    .pipe(buffer())
     .pipe(gulp.dest(destPath + '/js'));
 });
 
@@ -86,20 +97,21 @@ gulp.task('libraries', () => {
  * Also launch browserSync stream if we're watching
  */
 gulp.task('scripts', () => {
-  const bundler = browserify(scriptsPath + '/main.js', {debug: true})
-    .transform('babelify', { presets: ['latest'] });
-  const task = bundler
+  browserify(scriptsPath + '/main.js', {debug: true})
+    .transform('babelify', { presets: ['latest'] })
     .bundle()
     .on('error', renderBrowserifyErrors)
-    .pipe(source('bundle.js'))
+    .pipe(source('app.js'))
     .pipe(buffer())
+    .pipe(gulp.dest(destPath + '/js'))
+
+  const task = gulp.src([destPath + '/js/libs.js', destPath + '/js/app.js'])
+    .pipe(concat('bundle.js'))
     .pipe(gulp.dest(destPath + '/js'));
 
   if (isWatch()) {
     task.pipe(browserSync.stream());
   }
-
-  return task;
 });
 
 /**
@@ -114,7 +126,7 @@ gulp.task('styles', () => {
 
   task = gulp.src(stylesPath + '/main.less')
     .pipe(less({
-      paths: [path.join(srcPath, 'libs'), path.join(stylesPath, 'includes')],
+      paths: [path.join(rootPath, 'node_modules'), path.join(stylesPath, 'includes')],
     }))
     .pipe(rename('bundle.css'))
     .pipe(gulp.dest(destPath + '/css'));
