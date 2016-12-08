@@ -1,5 +1,6 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ezstore.messages.AddressMessage;
 
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "addresses")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Address {
 
     @Id

@@ -1,5 +1,6 @@
 package ezstore.services;
 
+import ezstore.entities.Product;
 import ezstore.entities.ProductBrand;
 import ezstore.helpers.ErrorHelper;
 import ezstore.messages.ProductBrandMessage;
@@ -40,8 +41,11 @@ public class BrandsService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBrand(ProductBrandMessage brandMessage) {
-        ProductBrand brand = new ProductBrand(brandMessage.getName(), brandMessage.getURL());
+    public Response createBrand(ProductBrandMessage message) {
+        ProductBrand brand = new ProductBrand();
+        brand.setName(message.getName());
+        brand.setUrl(message.getUrl());
+        brand.setVisible(message.isVisible());
         em.persist(brand);
 
         return Response.ok(brand).build();
@@ -51,12 +55,13 @@ public class BrandsService {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateBrand(@PathParam("id") Long id, ProductBrandMessage brandMessage) {
-        ProductBrand target = em.find(ProductBrand.class, id);
-        if (target != null) {
-            target.setName(brandMessage.getName());
-            target.setURL(brandMessage.getURL());
-            return Response.ok(target).build();
+    public Response updateBrand(@PathParam("id") Long id, ProductBrandMessage message) {
+        ProductBrand category = em.find(ProductBrand.class, id);
+        if (category != null) {
+            category.setName(message.getName());
+            category.setUrl(message.getUrl());
+            category.setVisible(message.isVisible());
+            return Response.ok(category).build();
         }
 
         return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
@@ -69,9 +74,17 @@ public class BrandsService {
         ProductBrand productBrand = em.find(ProductBrand.class, id);
 
         if (productBrand != null) {
+            List<Product> products = em.createQuery("SELECT p FROM Product p WHERE brand=:brand", Product.class)
+                    .setParameter("brand", productBrand)
+                    .getResultList();
+
+            for (Product product : products) {
+                product.setCategory(null);
+                em.persist(product);
+            }
+
             em.remove(productBrand);
             return Response.ok().build();
-
         }
 
         return ErrorHelper.createResponse(Response.Status.NOT_FOUND);

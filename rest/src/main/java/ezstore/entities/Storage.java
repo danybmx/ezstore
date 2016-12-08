@@ -1,6 +1,11 @@
 package ezstore.entities;
 
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.List;
 
 @Entity
@@ -12,6 +17,12 @@ public class Storage {
     private Long id;
 
     private String name;
+    private String phone;
+
+    @OneToOne(targetEntity = Address.class)
+    @Cascade(CascadeType.ALL)
+    @JoinColumn(name = "addressId")
+    private Address address;
 
     public Storage() {
     }
@@ -30,5 +41,21 @@ public class Storage {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

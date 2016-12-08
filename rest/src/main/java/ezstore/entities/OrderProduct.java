@@ -23,7 +23,7 @@ public class OrderProduct {
 
     @OneToOne(targetEntity = ProductOption.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "optionId")
-    private Product option;
+    private ProductOption option;
 
     public OrderProduct() {
     }
@@ -92,11 +92,11 @@ public class OrderProduct {
         this.product = product;
     }
 
-    public Product getOption() {
+    public ProductOption getOption() {
         return option;
     }
 
-    public void setOption(Product option) {
+    public void setOption(ProductOption option) {
         this.option = option;
     }
 }

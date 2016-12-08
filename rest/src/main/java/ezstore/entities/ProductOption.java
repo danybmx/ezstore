@@ -2,6 +2,8 @@ package ezstore.entities;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "product_options")
+@SQLDelete(sql = "UPDATE product_options SET deleted=true WHERE id=?")
+@Where(clause = "deleted != true")
 public class ProductOption {
 
     @Id
@@ -20,6 +24,7 @@ public class ProductOption {
     private String name;
     private Double price;
     private int discount;
+    private boolean deleted = false;
 
     @OneToMany(targetEntity = Stock.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "optionId")
@@ -96,5 +101,13 @@ public class ProductOption {
 
     public void setDiscount(int discount) {
         this.discount = discount;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

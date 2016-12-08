@@ -3,15 +3,20 @@ package ezstore.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "products")
+@SQLDelete(sql = "UPDATE products SET deleted=true WHERE id=?")
+@Where(clause = "deleted != true")
 @NamedQuery(name = "Product.findAll", query = "SELECT p FROM Product p")
 public class Product {
     @Id
@@ -21,10 +26,12 @@ public class Product {
     private String name;
     private String description;
     private Double price = 0.0;
+    private boolean deleted = false;
 
     @OneToMany(targetEntity = ProductOption.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "productId")
     @Fetch(value = FetchMode.SUBSELECT)
+    @Where(clause = "deleted != true")
     private List<ProductOption> options = new ArrayList<>();
 
     @OneToMany(targetEntity = ProductImage.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -119,5 +126,13 @@ public class Product {
 
     public void setBrand(ProductBrand brand) {
         this.brand = brand;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

@@ -4,18 +4,10 @@ import ezstore.helpers.Validation;
 
 public class ProductOptionMessage implements Message {
     private String name;
-    private String EAN;
+    private String ean;
     private Double price;
+    private Double discount;
     private String reference;
-
-    public boolean isValid() {
-        boolean valid = true;
-
-        if (this.name == null || this.name.length() < 1) { valid = false; }
-        if (this.price == null || !(this.price > 0)) { valid = false; }
-
-        return valid;
-    }
 
     public String getName() {
         return name;
@@ -26,11 +18,11 @@ public class ProductOptionMessage implements Message {
     }
 
     public String getEAN() {
-        return EAN;
+        return ean;
     }
 
-    public void setEAN(String EAN) {
-        this.EAN = EAN;
+    public void setEAN(String ean) {
+        this.ean = ean;
     }
 
     public Double getPrice() {
@@ -49,6 +41,14 @@ public class ProductOptionMessage implements Message {
         this.reference = reference;
     }
 
+    public Double getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Double discount) {
+        this.discount = discount;
+    }
+
     @Override
     public Validation validate() {
         Validation validation = new Validation();
@@ -57,18 +57,21 @@ public class ProductOptionMessage implements Message {
             validation.setValid(false);
             validation.getReasons().put("name", "Name cannot be empty");
         }
-        if (EAN == null || EAN.trim().length() < 1) {
+        if (price == null || !(price > 0)) {
             validation.setValid(false);
-            validation.getReasons().put("EAN", "EAN cannot be empty");
+            validation.getReasons().put("price", "Price should be higher than 0");
+        }
+
+        /*
+        if (ean == null || ean.trim().length() < 1) {
+            validation.setValid(false);
+            validation.getReasons().put("ean", "ean cannot be empty");
         }
         if (reference == null || reference.length() < 1) {
             validation.setValid(false);
             validation.getReasons().put("reference", "Reference cannot be empty");
         }
-        if (price == null || !(price > 0)) {
-            validation.setValid(false);
-            validation.getReasons().put("price", "Price should be higher than 0");
-        }
+        */
 
         return validation;
     }

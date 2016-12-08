@@ -4,12 +4,16 @@ import ezstore.entities.Product;
 import ezstore.entities.ProductOption;
 import ezstore.entities.Stock;
 import ezstore.entities.Storage;
+import ezstore.helpers.ErrorHelper;
+import ezstore.helpers.Validation;
+import ezstore.messages.StorageMessage;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/storages")
@@ -40,30 +44,44 @@ public class StoragesService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Storage createStorage(Storage storage) {
-        em.persist(storage);
+    public Response createStorage(StorageMessage message) {
+        Validation validation = message.validate();
 
-        List<ProductOption> options = em.createQuery("SELECT o FROM ProductOption o", ProductOption.class).getResultList();
-        for (ProductOption option : options) {
-            Stock stock = new Stock(storage, 0);
-            option.getStock().add(stock);
-            em.persist(option);
+        if (validation.isValid()) {
+            Storage storage = new Storage();
+            storage.setName(message.getName());
+            storage.setPhone(message.getPhone());
+            storage.setAddress(message.getAddress());
+
+            em.persist(storage);
+
+            List<ProductOption> options = em.createQuery("SELECT o FROM ProductOption o", ProductOption.class).getResultList();
+            for (ProductOption option : options) {
+                Stock stock = new Stock(storage, 0);
+                option.getStock().add(stock);
+                em.persist(option);
+            }
+
+            return Response.ok().entity(storage).build();
+        } else {
+            return ErrorHelper.createResponse(validation);
         }
-
-        return storage;
     }
 
     @PUT
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Storage updateStorage(@PathParam("id") Long id, Storage product) {
-        Storage target = em.find(Storage.class, id);
+    public Response updateStorage(@PathParam("id") Long id, StorageMessage message) {
+        Storage storage = em.find(Storage.class, id);
 
-        if (target != null) {
-            product.setId(id);
-            em.merge(product);
-            return product;
+        if (storage != null) {
+            storage.setName(message.getName());
+            storage.setPhone(message.getPhone());
+            storage.setAddress(message.getAddress());
+            em.merge(storage);
+
+            return Response.ok().entity(storage).build();
         }
 
         throw new NotFoundException();

@@ -61,7 +61,7 @@ public class ProductMessage implements Message {
         }
         if (categoryId == null || categoryId == 0) {
             validation.setValid(false);
-            validation.getReasons().put("cateogry", "Category cannot be empty");
+            validation.getReasons().put("category", "Category cannot be empty");
         }
 
         return validation;

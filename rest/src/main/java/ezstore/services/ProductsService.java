@@ -49,6 +49,8 @@ public class ProductsService {
             Product product = new Product();
             product.setName(productMessage.getName());
             product.setDescription(productMessage.getDescription());
+            product.setBrand(em.find(ProductBrand.class, productMessage.getBrandId()));
+            product.setCategory(em.find(ProductCategory.class, productMessage.getCategoryId()));
             em.persist(product);
 
             return Response.ok(product).build();
@@ -81,15 +83,15 @@ public class ProductsService {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String deleteProduct(@PathParam("id") Long id) {
+    public Response deleteProduct(@PathParam("id") Long id) {
         Product product = em.find(Product.class, id);
 
         if (product != null) {
             em.remove(product);
-            return "OK";
+            return Response.ok().build();
         }
 
-        throw new NotFoundException();
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
 }

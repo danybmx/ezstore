@@ -5,6 +5,7 @@ import ezstore.entities.ProductOption;
 import ezstore.entities.Stock;
 import ezstore.entities.Storage;
 import ezstore.helpers.ErrorHelper;
+import ezstore.helpers.Validation;
 import ezstore.messages.ProductOptionMessage;
 
 import javax.persistence.EntityManager;
@@ -45,7 +46,8 @@ public class ProductOptionsService {
         Product product = em.find(Product.class, productId);
 
         if (product != null) {
-            if (productOptionMessage.isValid()) {
+            Validation validation = productOptionMessage.validate();
+            if (validation.isValid()) {
                 ProductOption productOption = new ProductOption();
                 productOption.setName(productOptionMessage.getName());
                 productOption.setPrice(productOptionMessage.getPrice());
@@ -66,7 +68,7 @@ public class ProductOptionsService {
 
                 return Response.ok(productOption).build();
             } else {
-                return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+                return ErrorHelper.createResponse(productOptionMessage.validate());
             }
         }
 
@@ -85,7 +87,8 @@ public class ProductOptionsService {
         ProductOption productOption = em.find(ProductOption.class, id);
 
         if (product != null && productOption != null) {
-            if (productOptionMessage.isValid()) {
+            Validation validation = productOptionMessage.validate();
+            if (validation.isValid()) {
                 productOption.setEan(productOptionMessage.getEAN());
                 productOption.setName(productOptionMessage.getName());
                 productOption.setPrice(productOptionMessage.getPrice());
@@ -97,7 +100,7 @@ public class ProductOptionsService {
 
                 return Response.ok(productOption).build();
             } else {
-                return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+                return ErrorHelper.createResponse(validation);
             }
         }
 
@@ -106,7 +109,14 @@ public class ProductOptionsService {
 
     @DELETE
     @Path("/{id}")
-    public Response removeProductOption() {
-        return ErrorHelper.createResponse(Response.Status.NOT_IMPLEMENTED);
+    public Response removeProductOption(@PathParam("id") Long id) {
+        ProductOption option = em.find(ProductOption.class, id);
+
+        if (option != null) {
+            em.remove(option);
+            return Response.ok().build();
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 }

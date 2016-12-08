@@ -4,7 +4,7 @@ import ezstore.helpers.Validation;
 
 public class ProductCategoryMessage implements Message {
     private String name;
-    private String URL;
+    private String url;
     private boolean visible = true;
 
     public ProductCategoryMessage() {
@@ -18,12 +18,12 @@ public class ProductCategoryMessage implements Message {
         this.name = name;
     }
 
-    public String getURL() {
-        return URL;
+    public String getUrl() {
+        return url;
     }
 
-    public void setURL(String URL) {
-        this.URL = URL;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public boolean isVisible() {
@@ -42,9 +42,9 @@ public class ProductCategoryMessage implements Message {
             validation.setValid(false);
             validation.getReasons().put("name", "Name cannot be empty");
         }
-        if (URL == null || URL.trim().length() < 1) {
+        if (url == null || url.trim().length() < 1) {
             validation.setValid(false);
-            validation.getReasons().put("URL", "URL cannot be empty");
+            validation.getReasons().put("url", "url cannot be empty");
         }
 
         return validation;

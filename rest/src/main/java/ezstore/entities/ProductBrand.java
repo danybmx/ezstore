@@ -13,15 +13,17 @@ public class ProductBrand {
     @GeneratedValue
     private Long id;
 
-    private String URL;
+    private String url;
     private String name;
+    private boolean visible;
 
     public ProductBrand() {
     }
 
     public ProductBrand(String key, String name) {
-        this.URL = key;
+        this.url = key;
         this.name = name;
+        this.visible = true;
     }
 
     public Long getId() {
@@ -32,12 +34,12 @@ public class ProductBrand {
         this.id = id;
     }
 
-    public String getURL() {
-        return URL;
+    public String getUrl() {
+        return url;
     }
 
-    public void setURL(String url) {
-        this.URL = url;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getName() {
@@ -46,5 +48,13 @@ public class ProductBrand {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }
