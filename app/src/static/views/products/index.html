@@ -51,7 +51,7 @@
 								<th style="width: 160px">Brand</th>
 								<th style="width: 120px">Category</th>
                                 <th style="width: 100px">Price</th>
-                                <th style="width: 100px; text-align: right"><i class="fa fa-wrench"></i> Options</th>
+                                <th style="width: 140px; text-align: right"><i class="fa fa-wrench"></i> Options</th>
                             </tr>
                         </thead>
                         <tbody ng-repeat="product in products">
@@ -66,8 +66,8 @@
                                         <i class="fa fa-tag"></i>
                                     </a>
 									|
-                                    <a class="btn btn-xs btn-primary" ng-click="manageStock($index)" uib-tooltip="Check / manage stock">
-                                        <i class="fa fa-dropbox"></i>
+                                    <a class="btn btn-xs btn-warning" ng-click="manageStock($index)" uib-tooltip="Check / manage stock">
+                                        <i class="fa fa-tasks"></i>
                                     </a>
                                     <a class="btn btn-xs btn-primary" ng-click="editProduct($index)" uib-tooltip="Edit">
                                         <i class="fa fa-pencil"></i>

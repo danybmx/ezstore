@@ -49,7 +49,7 @@ module.exports = {
 
         // Load storages
         $q((resolve, reject) => {
-          api.storages.all().them((res) => {
+          api.storages.all().then((res) => {
             $scope.storages = res.data;
             resolve('storages');
           }, reject);
@@ -106,6 +106,7 @@ module.exports = {
     $scope.createProduct = () => {
       $scope.currentProductIndex = null;
       $scope.currentProduct = {
+        options: [],
         brand: null,
         category: null,
       };
@@ -147,7 +148,7 @@ module.exports = {
 
       defer.then((res) => {
         const defers = [];
-        const pId = $scope.currentProduct.id;
+        const pId = res.data.id;
 
         $scope.currentProduct.options.map((option) => {
           const optionMessage = {
@@ -176,9 +177,7 @@ module.exports = {
         $q.all(defers).then(() => {
           $scope.optionsToBeDeleted = [];
 
-          api.products.find(
-            $scope.products[$scope.currentProductIndex].id
-          ).then((res) => {
+          api.products.find(pId).then((res) => {
             if ($scope.action === 'edit') {
               $scope.products[$scope.currentProductIndex] = res.data;
             } else {

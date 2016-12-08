@@ -35,6 +35,8 @@ public class UsersService {
 
                 User user = new User();
                 user.setEmail(userMessage.getEmail());
+                user.setFirstName(userMessage.getFirstName());
+                user.setLastName(userMessage.getLastName());
                 user.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
                 em.persist(user);
 
