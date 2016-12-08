@@ -1,0 +1,134 @@
+<!-- Page Heading -->
+<div class="row">
+	<div class="col-lg-12">
+		<h1 class="page-header">
+			Storages
+		</h1>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item active" ng-if="isCurrentAction('list')">
+				<i class="fa fa-folder"></i> Storages
+			</li>
+			<li class="breadcrumb-item" ng-if="!isCurrentAction('list')">
+                <a href="" ng-click="showList()"><i class="fa fa-star"></i> Storages</a>
+            </li>
+			<li class="breadcrumb-item active" ng-if="isCurrentAction('edit')">
+                <i class="fa fa-pencil"></i> Edit
+            </li>
+            <li class="breadcrumb-item active" ng-if="isCurrentAction('create')">
+                <i class="fa fa-pencil"></i> Create
+            </li>
+		</ol>
+	</div>
+</div>
+
+<div class="row" ng-if="error !== null">
+    <div class="col-lg-12">
+    	<div class="alert alert-danger">
+    		{{error}}
+    	</div>
+    </div>
+</div>
+
+<div class="row" ng-if="isCurrentAction('list')">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Storages</h3>
+            </div>
+            <div class="panel-body">
+				<a href="javascript:;" ng-click="createStorage()" class="btn btn-primary"><i class="fa fa-plus"></i> Create Storage</a>
+				<hr>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+								<th>Phone</th>
+								<th>Address</th>
+								<th style="width: 60px; text-align: center;">Visible</th>
+                                <th style="width: 100px; text-align: right"><i class="fa fa-wrench"></i> Options</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="storage in storages">
+                            <tr>
+                                <td>{{storage.name}}</td>
+								<td>{{storage.phone}}</td>
+								<td>
+									<span ng-show="storage.address">
+										{{storage.address.city}} - {{storage.address.postalCode}} - {{storage.address.line1}}
+									</span>
+									<span ng-hide="storage.address">
+										N/A
+									</span>
+								</td>
+								<td style="text-align: center">
+									<i class="fa fa-check" ng-show="storage.visible"></i>
+									<i class="fa fa-times" ng-hide="storage.visible"></i>
+								</td>
+                                <td style="text-align: right">
+                                    <a class="btn btn-xs btn-primary" ng-click="editStorage($index)" uib-tooltip="Edit">
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a class="btn btn-xs btn-danger" ng-click="deleteStorage($index)" uib-tooltip="Delete">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" ng-if="isCurrentAction('create') || isCurrentAction('edit')">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                  	<span ng-show="isCurrentAction('create')">Create a new Storage</span>
+                  	<span ng-show="isCurrentAction('edit')">{{currentStorage.name}}</span>
+                </h3>
+            </div>
+            <form name="forms.storageForm" ng-submit="forms.storageForm.$valid && saveStorage()" novalidate>
+	            <div class="panel-body">
+					<div class="form-group">
+						<label for="inputName" class="control-label">Name</label>
+						<input type="text" id="inputName" ng-model="currentStorage.name" class="form-control" required>
+					</div>
+	                <div class="form-group">
+	                    <label for="inputPhone" class="control-label">Phone</label>
+	                    <input type="text" id="inputPhone" ng-model="currentStorage.phone" class="form-control" required>
+	                </div>
+					<hr>
+					<div class="form-group">
+						<label for="inputAddress" class="control-label">Address</label>
+						<input type="text" id="inputAddress" ng-model="currentStorage.address.line1" class="form-control">
+					</div>
+					<div class="row">
+						<div class="form-group col-xs-3">
+							<label for="inputPC" class="control-label">Postal Code</label>
+							<input type="text" id="inputPC" ng-model="currentStorage.address.postalCode" class="form-control">
+						</div>
+						<div class="form-group col-xs-3">
+							<label for="inputCity" class="control-label">City</label>
+							<input type="text" id="inputCity" ng-model="currentStorage.address.city" class="form-control">
+						</div>
+						<div class="form-group col-xs-3">
+							<label for="inputState" class="control-label">State</label>
+							<input type="text" id="inputState" ng-model="currentStorage.address.state" class="form-control">
+						</div>
+						<div class="form-group col-xs-3">
+							<label for="inputCountry" class="control-label">Country</label>
+							<input type="text" id="inputCountry" ng-model="currentStorage.address.country" class="form-control">
+						</div>
+					</div>
+				</div>
+				<div class="panel-footer">
+					<button class="btn btn-primary" ng-disabled="!forms.storageForm.$valid || forms.storageForm.$submitted" type="submit"><i class="fa fa-save"></i> Save</button>
+				</div>
+            </form>
+        </div>
+    </div>
+</div>

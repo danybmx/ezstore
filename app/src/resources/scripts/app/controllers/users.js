@@ -3,7 +3,10 @@ module.exports = {
     $scope.authenticate = function($event) {
       $event.preventDefault();
 
-      const authenticationData = $scope.authForm.email + ':' + $scope.authForm.password;
+      const email = $scope.authForm.email;
+      const password = $scope.authForm.password;
+      const authenticationData = email + ':' + password;
+
       $http.get('http://localhost:8080/auth', {
         headers: {
           Authorization: 'Basic ' + btoa(authenticationData),

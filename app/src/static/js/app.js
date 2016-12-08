@@ -150,7 +150,7 @@ module.exports = {
         $scope.loading = false;
         $scope.currentProduct = null;
         $scope.currentProductIndex = null;
-        $scope.error = err.message;
+        $scope.error = err.data.message;
       });
     };
 
@@ -168,7 +168,7 @@ module.exports = {
           $scope.products[$scope.currentProductIndex] = res.data;
           $scope.showList();
         }, function (err) {
-          $scope.error = err.message;
+          $scope.error = err.data.message;
         });
       } else {
         api.products.update(product);

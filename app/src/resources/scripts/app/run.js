@@ -1,6 +1,14 @@
+const helpers = require('./helpers');
+
 module.exports = function($rootScope, $location, $route, $http) {
   $rootScope.authToken = window.localStorage.getItem('authToken');
   $rootScope.loading = false;
+
+  for(const name in helpers) {
+    if (helpers.hasOwnProperty(name)) {
+      $rootScope[name] = helpers[name];
+    }
+  }
 
   if ($rootScope.authToken) {
     $rootScope.loading = true;

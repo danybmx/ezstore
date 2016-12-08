@@ -1,20 +1,34 @@
 module.exports = {
-  productsController: function ($scope, $q, api) {
+  productsController: function($scope, $q, api) {
     // Default values
     $scope.action = 'list';
     $scope.loading = true;
     $scope.error = null;
+    $scope.forms = {};
 
     // Data containers
     $scope.brand = null;
     $scope.categories = null;
+    $scope.storages = null;
     $scope.products = null;
 
     // Selected product container
+    $scope.optionsToBeDeleted = [];
     $scope.currentProduct = null;
     $scope.currentProductIndex = null;
 
-    // Loda data
+    // handleError
+    const handleError = (err) => {
+      if (err.data.reasons) {
+        $scope.error = err.data.reasons;
+      } else {
+        $scope.error = err.data.message;
+      }
+
+      throw new Error(err.data.message);
+    };
+
+    // Load data
     $scope.loadData = () => {
       $q.all([
         // Load products
@@ -30,6 +44,14 @@ module.exports = {
           api.brands.all().then((res) => {
             $scope.brands = res.data;
             resolve('brands');
+          }, reject);
+        }),
+
+        // Load storages
+        $q((resolve, reject) => {
+          api.storages.all().them((res) => {
+            $scope.storages = res.data;
+            resolve('storages');
           }, reject);
         }),
 
@@ -60,7 +82,7 @@ module.exports = {
       $scope.currentProductIndex = null;
       $scope.currentProduct = null;
       $scope.action = 'list';
-    }
+    };
 
     // editProduct
     $scope.editProduct = (index) => {
@@ -76,8 +98,34 @@ module.exports = {
         $scope.loading = false;
         $scope.currentProduct = null;
         $scope.currentProductIndex = null;
-        $scope.error = err.message;
+        $scope.error = err.data.message;
       });
+    };
+
+    // createProduct
+    $scope.createProduct = () => {
+      $scope.currentProductIndex = null;
+      $scope.currentProduct = {
+        brand: null,
+        category: null,
+      };
+      $scope.action = 'create';
+    };
+
+    $scope.addOption = () => {
+      $scope.currentProduct.options.push({});
+    };
+
+    $scope.deleteOption = ($index) => {
+      if (confirm('Are you sure?')) {
+        const option = $scope.currentProduct.options[$index];
+        if (option.id) {
+          $scope.currentProduct.options.splice($index, 1);
+          $scope.optionsToBeDeleted.push(option.id);
+        } else {
+          $scope.currentProduct.options.splice($index, 1);
+        }
+      }
     };
 
     // saveProduct
@@ -89,16 +137,79 @@ module.exports = {
         categoryId: $scope.currentProduct.category.id,
       };
 
-      if ($scope.action == 'edit') {
-        api.products.update($scope.currentProduct.id, product).then((res) => {
-          $scope.products[$scope.currentProductIndex] = res.data;
-          $scope.showList();
-        }, (err) => {
-          $scope.error = err.message;
-        });
+      let defer;
+
+      if ($scope.action === 'edit') {
+        defer = api.products.update($scope.currentProduct.id, product);
       } else {
-        api.products.update(product);
+        defer = api.products.create(product);
       }
-    }
+
+      defer.then((res) => {
+        const defers = [];
+        const pId = $scope.currentProduct.id;
+
+        $scope.currentProduct.options.map((option) => {
+          const optionMessage = {
+            name: option.name,
+            ean: option.ean,
+            price: option.price,
+            discount: option.discount,
+            reference: option.reference,
+          };
+
+          if (option.id) {
+            defers.push(
+              api.products.options.update(pId, option.id, optionMessage)
+            );
+          } else {
+            defers.push(api.products.options.create(pId, optionMessage));
+          }
+        });
+
+        $scope.optionsToBeDeleted.map((oId) => {
+          defers.push(
+            api.products.options.delete($scope.currentProduct.id, oId)
+          );
+        });
+
+        $q.all(defers).then(() => {
+          $scope.optionsToBeDeleted = [];
+
+          api.products.find(
+            $scope.products[$scope.currentProductIndex].id
+          ).then((res) => {
+            if ($scope.action === 'edit') {
+              $scope.products[$scope.currentProductIndex] = res.data;
+            } else {
+              $scope.products.push(res.data);
+            }
+            $scope.showList();
+          }, (err) => {
+            $scope.forms.productForm.$submitted = false;
+            handleError(err);
+          });
+        }, (err) => {
+          $scope.forms.productForm.$submitted = false;
+          handleError(err);
+        });
+      }, (err) => {
+        $scope.forms.productForm.$submitted = false;
+        handleError(err);
+      });
+    };
+
+    // deleteProduct
+    $scope.deleteProduct = (index) => {
+      if (confirm('Are you sure?')) {
+        $scope.loading = true;
+        api.products.delete($scope.products[index].id).then((res) => {
+          $scope.products.splice(index, 1);
+          $scope.loading = false;
+        }, (err) => {
+          $scope.error = err.data.message;
+        });
+      };
+    };
   },
 };

@@ -4,6 +4,7 @@ const modules = [
   require('./users'),
   require('./categories'),
   require('./brands'),
+  require('./storages'),
 ];
 
 const controllers = {};

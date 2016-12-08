@@ -54,13 +54,13 @@
 							<i class="fa fa-fw fa-book"></i> Catalog
 						</a>
 						<ul id="catalogNav" class="subnav" ng-class="{collapse: catalogNav != true}">
-							<li>
+							<li ng-class="{active: controller == 'productsController'}">
 								<a href="#/products"><i class="fa fa-fw fa-star"></i> Products</a>
 							</li>
-							<li>
+							<li ng-class="{active: controller == 'categoriesController'}">
 								<a href="#/categories"><i class="fa fa-fw fa-folder"></i> Categories</a>
 							</li>
-							<li>
+							<li ng-class="{active: controller == 'brandsController'}">
 								<a href="#/brands"><i class="fa fa-fw fa-tag"></i> Brands</a>
 							</li>
 						</ul>
