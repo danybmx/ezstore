@@ -4,7 +4,13 @@ const controllers = require('./app/controllers');
 const services = require('./app/services');
 
 // Create the app module and name it.
-const app = angular.module('managementApp', ['ngRoute', 'ngAnimate', 'ngTouch', 'ui.bootstrap']);
+const app = angular.module('managementApp', [
+  'ngRoute',
+  'ngAnimate',
+  'ngTouch',
+  'ui.bootstrap',
+  'ngFileUpload',
+]);
 
 // Add controllers dynamically
 for (let key in controllers) {

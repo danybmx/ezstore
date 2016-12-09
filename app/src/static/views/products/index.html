@@ -11,6 +11,9 @@
             <li class="breadcrumb-item" ng-if="!isCurrentAction('list')">
                 <a href="" ng-click="showList()"><i class="fa fa-star"></i> Products</a>
             </li>
+			<li class="breadcrumb-item active" ng-if="isCurrentAction('stock')">
+                <i class="fa fa-tasks"></i> Stock
+            </li>
             <li class="breadcrumb-item active" ng-if="isCurrentAction('edit')">
                 <i class="fa fa-pencil"></i> Edit
             </li>
@@ -51,7 +54,7 @@
 								<th style="width: 160px">Brand</th>
 								<th style="width: 120px">Category</th>
                                 <th style="width: 100px">Price</th>
-                                <th style="width: 140px; text-align: right"><i class="fa fa-wrench"></i> Options</th>
+                                <th style="width: 140px; text-align: right"><i class="fa fa-wrench"></i></th>
                             </tr>
                         </thead>
                         <tbody ng-repeat="product in products">
@@ -62,11 +65,7 @@
 								<td>{{product.category.name}}</td>
                                 <td>{{product.price | currency:'€'}}</td>
                                 <td style="text-align: right">
-                                    <a class="btn btn-xs btn-success" uib-tooltip="Print stickers">
-                                        <i class="fa fa-tag"></i>
-                                    </a>
-									|
-                                    <a class="btn btn-xs btn-warning" ng-click="manageStock($index)" uib-tooltip="Check / manage stock">
+                                    <a class="btn btn-xs btn-success" ng-click="manageStock($index)" uib-tooltip="Check / manage stock">
                                         <i class="fa fa-tasks"></i>
                                     </a>
                                     <a class="btn btn-xs btn-primary" ng-click="editProduct($index)" uib-tooltip="Edit">
@@ -100,10 +99,9 @@
                             <th style="width: 100px">Reference</th>
                             <th style="width: 160px">EAN</th>
                             <th>Name</th>
-                            <th style="width: 100px" ng-repeat="storage in storages">
+                            <th style="text-align: center" ng-repeat="storage in storages">
                                 {{storage.name}}
                             </th>
-                            <th style="width: 50px; text-align: right"><i class="fa fa-wrench"></i></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -111,13 +109,19 @@
                             <td>{{option.reference}}</td>
                             <td>{{option.ean}}</td>
                             <td>{{option.name}}</td>
-                            <td ng-repeat="storage in storages">
-
-                            </td>
-                            <td style="text-align: right">
-                                <a class="btn btn-xs btn-danger" ng-click="deleteOption($index)" uib-tooltip="Delete">
-                                    <i class="fa fa-times"></i>
-                                </a>
+                            <td style="text-align: center; width: 160px;" ng-repeat="storage in storages">
+								<span ng-hide="isCurrentStock(option, storage)">
+									{{getStock(option, storage).units}}
+									<a href="javascript:;" class="btn btn-default btn-sm" ng-click="editStock(option, storage)">
+										<i class="fa fa-pencil"></i>
+									</a>
+								</span>
+								<span ng-show="isCurrentStock(option, storage)" class="input-group">
+									<input type="text" ng-model="currentStock.units" class="form-control input-sm">
+									<a href="javascript:;" ng-disable="savingStock" class="btn btn-success input-group-addon" ng-click="saveStock()">
+										<i class="fa fa-check"3></i>
+									</a>
+								</span>
                             </td>
                         </tr>
                     </tbody>
@@ -199,8 +203,22 @@
 						</tbody>
 	                </table>
 					<a href="javascript:;" ng-click="addOption()" class="btn btn-primary"><i class="fa fa-plus"></i> Add option</a>
-					<hr>
-	                <h4>Images</h4>
+                    <hr>
+                    <h4>Images</h4>
+                    <a href="javascript:;"
+					   ng-model="imageUpload"
+					   accept="image/*"
+					   ngf-select="uploadFile($file, $invalidFiles)"
+					   class="btn btn-primary">
+						<i class="fa fa-plus"></i> Add image
+				  	</a>
+					<div style="font:smaller">{{f.name}} {{errFile.name}} {{errFile.$error}} {{errFile.$errorParam}}
+						<span class="progress" ng-show="f.progress >= 0">
+							<div style="width:{{f.progress}}%" ng-bind="f.progress + '%'"></div>
+						</span>
+					</div>
+					{{errorMsg}}
+					{{imageUploadErrFile}}
 				</div>
 				<div class="panel-footer">
 					<button class="btn btn-primary" ng-disabled="!forms.productForm.$valid || forms.productForm.$submitted" type="submit"><i class="fa fa-save"></i> Save</button>

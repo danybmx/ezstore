@@ -1,6 +1,6 @@
 const apiUrl = 'http://localhost:8080';
 
-module.exports = function($rootScope, $http) {
+module.exports = function($rootScope, $http, Upload) {
   const options = {
     headers: {
       Authorization: 'Bearer ' + $rootScope.authToken,
@@ -22,6 +22,13 @@ module.exports = function($rootScope, $http) {
     },
     delete: (id) => {
       return $http.delete(apiUrl + '/products/' + id, options);
+    },
+    uploadImage: (file) => {
+      return Upload.upload({
+        url: apiUrl + '/media/products',
+        data: {file: file},
+        options: options,
+      });
     },
     options: {
       update: (productId, id, option) => {

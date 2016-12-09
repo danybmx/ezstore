@@ -1,4 +1,5 @@
 const modules = [
+  require('./auth'),
   require('./dashboard'),
   require('./products'),
   require('./users'),

@@ -45,8 +45,7 @@
                                 <th>Name</th>
 								<th>Phone</th>
 								<th>Address</th>
-								<th style="width: 60px; text-align: center;">Visible</th>
-                                <th style="width: 100px; text-align: right"><i class="fa fa-wrench"></i> Options</th>
+                                <th style="width: 100px; text-align: right"><i class="fa fa-wrench"></i></th>
                             </tr>
                         </thead>
                         <tbody ng-repeat="storage in storages">
@@ -60,10 +59,6 @@
 									<span ng-hide="storage.address">
 										N/A
 									</span>
-								</td>
-								<td style="text-align: center">
-									<i class="fa fa-check" ng-show="storage.visible"></i>
-									<i class="fa fa-times" ng-hide="storage.visible"></i>
 								</td>
                                 <td style="text-align: right">
                                     <a class="btn btn-xs btn-primary" ng-click="editStorage($index)" uib-tooltip="Edit">

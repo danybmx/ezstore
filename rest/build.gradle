@@ -19,6 +19,9 @@ dependencies {
     // Json
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.4'
 
+    // Multipart support
+    compileOnly 'org.jboss.resteasy:resteasy-multipart-provider:3.0.19.Final'
+
     // Hibernate
     compile 'org.hibernate:hibernate-core:5.2.3.Final'
     compile 'org.hibernate:hibernate-entitymanager:5.2.3.Final'

@@ -10,3 +10,4 @@ require('angular-route');
 require('angular-animate');
 require('angular-touch');
 require('angular-bootstrap');
+require('ng-file-upload');

@@ -43,5 +43,6 @@ module.exports = function($rootScope, $location, $route, $http) {
     $rootScope.controller = data.controller;
   });
 
-  $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.authToken;
+  $http.defaults.headers.common.Authorization = 'Bearer ' +
+    $rootScope.authToken;
 };

@@ -1,5 +1,5 @@
 module.exports = {
-  productsController: function($scope, $q, api) {
+  productsController: function($scope, Upload, $q, api) {
     // Default values
     $scope.action = 'list';
     $scope.loading = true;
@@ -16,6 +16,15 @@ module.exports = {
     $scope.optionsToBeDeleted = [];
     $scope.currentProduct = null;
     $scope.currentProductIndex = null;
+
+    // Stock container
+    $scope.currentStock = null;
+    $scope.currentOption = null;
+    $scope.savingStock = false;
+
+    // Uploader
+    $scope.imageUpload = null;
+    $scope.imageUploadErrFile = null;
 
     // handleError
     const handleError = (err) => {
@@ -113,22 +122,6 @@ module.exports = {
       $scope.action = 'create';
     };
 
-    $scope.addOption = () => {
-      $scope.currentProduct.options.push({});
-    };
-
-    $scope.deleteOption = ($index) => {
-      if (confirm('Are you sure?')) {
-        const option = $scope.currentProduct.options[$index];
-        if (option.id) {
-          $scope.currentProduct.options.splice($index, 1);
-          $scope.optionsToBeDeleted.push(option.id);
-        } else {
-          $scope.currentProduct.options.splice($index, 1);
-        }
-      }
-    };
-
     // saveProduct
     $scope.saveProduct = () => {
       const product = {
@@ -209,6 +202,91 @@ module.exports = {
           $scope.error = err.data.message;
         });
       };
+    };
+
+    // addOption
+    $scope.addOption = () => {
+      $scope.currentProduct.options.push({});
+    };
+
+    // deleteOption
+    $scope.deleteOption = ($index) => {
+      if (confirm('Are you sure?')) {
+        const option = $scope.currentProduct.options[$index];
+        if (option.id) {
+          $scope.currentProduct.options.splice($index, 1);
+          $scope.optionsToBeDeleted.push(option.id);
+        } else {
+          $scope.currentProduct.options.splice($index, 1);
+        }
+      }
+    };
+
+    // uploadFile
+    $scope.uploadFile = (file, errFiles) => {
+      $scope.imageUpload = file;
+      $scope.imageUploadErrFile = errFiles && errFiles[0];
+
+      if (file) {
+        file.upload = api.products.uploadImage($scope.currentProduct.id, file);
+        file.upload.then((res) => {
+          console.log(res);
+        }, (err) => {
+          handleError(err);
+        }, (evt) => {
+          file.progress = Math.min(100, parseInt(100 * evt.loaded / evt.total));
+        });
+      }
+    };
+
+    // manageStock
+    $scope.manageStock = ($index) => {
+      $scope.currentProduct = $scope.products[$index];
+      $scope.currentProductIndex = $index;
+      $scope.action = 'stock';
+    };
+
+    // getStock
+    $scope.getStock = (option, storage) => {
+      for (let i = 0; i < option.stock.length; i++) {
+        const stock = option.stock[i];
+        if (stock.storage.id === storage.id) {
+          return stock;
+        }
+      }
+    };
+
+    // isCurrentStock
+    $scope.isCurrentStock = (option, storage) => {
+      if ($scope.currentStock) {
+        return $scope.currentOption.id === option.id
+          && $scope.currentStock.storage.id === storage.id;
+      } else {
+        return false;
+      }
+    };
+
+    // editStock
+    $scope.editStock = (option, storage) => {
+      $scope.currentOption = option;
+      $scope.currentStock = $scope.getStock(option, storage);
+    };
+
+    // saveStock
+    $scope.saveStock = () => {
+      $scope.savingStock = true;
+      api.products.options.stock.set(
+        $scope.currentProduct.id,
+        $scope.currentOption.id,
+        $scope.currentStock.storage.id,
+        $scope.currentStock.units
+      ).then((res) => {
+        $scope.savingStock = false;
+        $scope.currentOption = null;
+        $scope.currentStock = null;
+      }, (err) => {
+        handleError(err);
+      });
     };
   },
 };
