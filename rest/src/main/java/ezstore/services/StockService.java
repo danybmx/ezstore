@@ -1,5 +1,7 @@
 package ezstore.services;
 
+import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.ProductOption;
 import ezstore.entities.Stock;
 import ezstore.entities.Storage;
@@ -21,6 +23,7 @@ public class StockService {
 
     @PUT
     @Path("/{storageId}/{units}")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Stock setOptionStock(@PathParam("optionId") Long optionId, @PathParam("storageId") Long storageId, @PathParam("units") int units) {
         ProductOption option = em.find(ProductOption.class, optionId);

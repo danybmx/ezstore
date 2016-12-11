@@ -1,6 +1,7 @@
 package ezstore.helpers;
 
 import ezstore.entities.User;
+import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,8 +16,12 @@ public class AuthorizedServiceHelper {
     private EntityManager em;
 
     protected User getCurrentUser() {
-        return em.createNamedQuery("getUserByEmail", User.class)
+        User user = em.createNamedQuery("getUserByEmail", User.class)
                 .setParameter("email", securityContext.getUserPrincipal().getName())
                 .getSingleResult();
+
+        Hibernate.initialize(user.getRoles());
+
+        return user;
     }
 }

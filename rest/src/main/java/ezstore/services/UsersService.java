@@ -1,14 +1,17 @@
 package ezstore.services;
 
-import ezstore.auth.PasswordHelper;
+import ezstore.auth.Role;
 import ezstore.entities.User;
 import ezstore.annotations.Secured;
+import ezstore.helpers.AuthorizedServiceHelper;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
 import ezstore.messages.UserMessage;
+import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -18,29 +21,22 @@ import javax.ws.rs.core.Response;
 
 @Path("/users")
 @Transactional
-public class UsersService {
+public class UsersService extends AuthorizedServiceHelper {
 
-    @PersistenceContext
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager em;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createUser(UserMessage userMessage) {
-
         if (userMessage != null) {
             Validation validation = userMessage.validate();
 
             if (validation.isValid()) {
 
                 User user = new User();
-                user.setEmail(userMessage.getEmail());
-                user.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
-                user.setFirstName(userMessage.getFirstName());
-                user.setLastName(userMessage.getLastName());
-                user.setPhone(userMessage.getPhone());
-                user.setBornDate(userMessage.getBornDate());
-                user.setVAT(userMessage.getVAT());
+                user.applyMessage(userMessage);
                 em.persist(user);
 
                 return Response.ok(user).build();
@@ -52,41 +48,53 @@ public class UsersService {
         }
 
         return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
-
     }
 
     @PUT
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    public Response updateCurrentUser(UserMessage userMessage) {
+        User user = getCurrentUser();
+        return updateUser(user.getId(), userMessage);
+    }
+
+    @PUT
+    @Secured(Role.ADMIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response updateUser(@PathParam("id") Long id, UserMessage userMessage) {
+    public Response updateUser(
+            @PathParam("id") Long id,
+            UserMessage userMessage) {
 
-        if (userMessage != null) {
-            Validation validation = userMessage.validate();
+        User user = em.find(User.class, id);
 
-            if (validation.isValid()) {
+        if (this.getCurrentUser().getId().equals(id) || this.getCurrentUser().hasRole(Role.ADMIN)) {
+            if (user != null) {
+                if (userMessage != null) {
+                    Validation validation = userMessage.validate();
 
-                User user = new User();
-                user.setEmail(userMessage.getEmail());
-                user.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
-                user.setFirstName(userMessage.getFirstName());
-                user.setLastName(userMessage.getLastName());
-                user.setPhone(userMessage.getPhone());
-                user.setBornDate(userMessage.getBornDate());
-                user.setVAT(userMessage.getVAT());
-                em.persist(user);
+                    if (validation.isValid()) {
 
-                return Response.ok(user).build();
+                        user.applyMessage(userMessage);
+                        em.persist(user);
 
+                        return Response.ok(user).build();
+
+                    } else {
+                        return ErrorHelper.createResponse(validation);
+                    }
+                }
             } else {
-                return ErrorHelper.createResponse(validation);
+                return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
             }
 
+            return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+
+        } else {
+            return ErrorHelper.createResponse(Response.Status.FORBIDDEN);
         }
-
-        return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
-
     }
 
     @GET
@@ -94,11 +102,6 @@ public class UsersService {
     @Path("/me")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCurrentUser(@Context SecurityContext securityContext) {
-      User user = em
-              .createQuery("SELECT u FROM User u WHERE u.email=:email", User.class)
-              .setParameter("email", securityContext.getUserPrincipal().getName())
-              .getSingleResult();
-
-      return Response.ok(user).build();
+        return Response.ok(getCurrentUser()).build();
     }
 }

@@ -1,5 +1,7 @@
 package ezstore.services;
 
+import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.helpers.ErrorHelper;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -23,6 +25,7 @@ public class MediaService {
 
     @POST
     @Path("/products")
+    @Secured(Role.ADMIN)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public Response uploadProductImage(MultipartFormDataInput multipartInput) throws IOException {

@@ -65,8 +65,8 @@ public class ProductsService {
     }
 
     @PUT
-    @Secured(Role.ADMIN)
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateProduct(@PathParam("id") Long id, ProductMessage productMessage) {
@@ -85,8 +85,8 @@ public class ProductsService {
     }
 
     @DELETE
-    @Secured(Role.ADMIN)
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.TEXT_PLAIN)
     public Response deleteProduct(@PathParam("id") Long id) {
         Product product = em.find(Product.class, id);

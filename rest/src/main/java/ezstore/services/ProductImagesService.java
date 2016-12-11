@@ -1,5 +1,7 @@
 package ezstore.services;
 
+import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.*;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
@@ -23,6 +25,7 @@ public class ProductImagesService {
 
     @GET
     @Path("/")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductImages(@PathParam("productId") Long productId) {
         Product product = em.find(Product.class, productId);
@@ -36,6 +39,7 @@ public class ProductImagesService {
 
     @POST
     @Path("/")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createProductImage(
@@ -64,6 +68,7 @@ public class ProductImagesService {
 
     @PUT
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateProductImage(
@@ -94,6 +99,7 @@ public class ProductImagesService {
 
     @DELETE
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     public Response removeProductImage(@PathParam("id") Long id) {
         ProductImage image = em.find(ProductImage.class, id);
 

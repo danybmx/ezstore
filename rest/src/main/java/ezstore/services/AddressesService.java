@@ -1,6 +1,7 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.Address;
 import ezstore.helpers.AuthorizedServiceHelper;
 import ezstore.helpers.ErrorHelper;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 
 @Secured
 @Transactional
@@ -28,7 +30,6 @@ public class AddressesService extends AuthorizedServiceHelper {
     private EntityManager em;
 
     @GET
-    @Secured
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserAddresses() {
         return Response.ok(getCurrentUser().getAddresses()).build();
@@ -64,9 +65,9 @@ public class AddressesService extends AuthorizedServiceHelper {
     public Response updateAddress(@PathParam("id") Long id, AddressMessage message) {
         Address address = em.find(Address.class, id);
 
-        if (address != null) {
+        if (address != null && getCurrentUser().getAddresses().contains(address)) {
             address.applyMessage(message);
-            em.merge(address);
+            em.persist(address);
             return Response.ok(address).build();
         }
 

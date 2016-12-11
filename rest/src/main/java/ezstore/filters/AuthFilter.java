@@ -1,6 +1,7 @@
 package ezstore.filters;
 
 import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.User;
 import ezstore.helpers.ErrorHelper;
 
@@ -54,7 +55,7 @@ public class AuthFilter implements ContainerRequestFilter {
 
                     @Override
                     public boolean isUserInRole(String role) {
-                        return user.getRoles()
+                        return user.hasRole(Role.valueOf(role));
                     }
 
                     @Override

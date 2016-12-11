@@ -1,10 +1,14 @@
 package ezstore.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ezstore.auth.PasswordHelper;
+import ezstore.auth.Role;
+import ezstore.messages.UserMessage;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -31,7 +35,10 @@ public class User {
 
     private String VAT;
 
-    private List<Role> roles;
+    @ElementCollection
+    @JoinTable(name = "users_roles")
+    @JoinColumn(name = "userId")
+    private Set<Role> roles;
 
     @OneToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "defaultBillingAddressId")
@@ -46,6 +53,16 @@ public class User {
     private List<Address> addresses;
 
     public User() {
+    }
+
+    public void applyMessage(UserMessage userMessage) {
+        this.setEmail(userMessage.getEmail());
+        this.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
+        this.setFirstName(userMessage.getFirstName());
+        this.setLastName(userMessage.getLastName());
+        this.setPhone(userMessage.getPhone());
+        this.setBornDate(userMessage.getBornDate());
+        this.setVAT(userMessage.getVAT());
     }
 
     public Long getId() {
@@ -124,6 +141,14 @@ public class User {
         return defaultBillingAddress;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     public void setDefaultBillingAddress(Address defaultBillingAddress) {
         this.defaultBillingAddress = defaultBillingAddress;
     }
@@ -142,5 +167,11 @@ public class User {
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    public boolean hasRole(Role role) {
+        if (this.roles.contains(Role.OWNER)) return true;
+        if (this.roles.contains(role)) return true;
+        return false;
     }
 }

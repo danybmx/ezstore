@@ -37,8 +37,8 @@ public class ProductOptionsService {
     }
 
     @POST
-    @Secured(Role.ADMIN)
     @Path("/")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createProductOption(
@@ -87,8 +87,8 @@ public class ProductOptionsService {
     }
 
     @PUT
-    @Secured(Role.ADMIN)
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateProductOption(
@@ -130,8 +130,8 @@ public class ProductOptionsService {
     }
 
     @DELETE
-    @Secured(Role.ADMIN)
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     public Response removeProductOption(@PathParam("id") Long id) {
         ProductOption option = em.find(ProductOption.class, id);
 

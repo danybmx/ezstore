@@ -1,7 +1,10 @@
 package ezstore.services;
 
+import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.Product;
 import ezstore.entities.ProductBrand;
+import ezstore.helpers.AuthorizedServiceHelper;
 import ezstore.helpers.ErrorHelper;
 import ezstore.messages.ProductBrandMessage;
 
@@ -15,7 +18,7 @@ import java.util.List;
 
 @Path("/brands")
 @Transactional
-public class BrandsService {
+public class BrandsService extends AuthorizedServiceHelper {
 
     @PersistenceContext
     private EntityManager em;
@@ -39,6 +42,7 @@ public class BrandsService {
     }
 
     @POST
+    @Secured(Role.ADMIN)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createBrand(ProductBrandMessage message) {
@@ -53,6 +57,7 @@ public class BrandsService {
 
     @PUT
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateBrand(@PathParam("id") Long id, ProductBrandMessage message) {
@@ -69,6 +74,7 @@ public class BrandsService {
 
     @DELETE
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.TEXT_PLAIN)
     public Response deleteBrand(@PathParam("id") Long id) {
         ProductBrand productBrand = em.find(ProductBrand.class, id);

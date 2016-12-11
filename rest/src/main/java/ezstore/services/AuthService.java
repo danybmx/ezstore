@@ -7,6 +7,7 @@ import ezstore.helpers.ErrorHelper;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.transaction.Transactional;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,7 +20,7 @@ import java.util.logging.Logger;
 public class AuthService {
     private Logger logger = Logger.getLogger("AUTH_SERVICE");
 
-    @PersistenceContext
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager em;
 
     @GET
@@ -71,6 +72,7 @@ public class AuthService {
                 return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
             }
         }
+
         return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
     }
 

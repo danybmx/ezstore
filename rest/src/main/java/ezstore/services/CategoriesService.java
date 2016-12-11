@@ -1,5 +1,7 @@
 package ezstore.services;
 
+import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.Product;
 import ezstore.entities.ProductCategory;
 import ezstore.helpers.ErrorHelper;
@@ -40,6 +42,7 @@ public class CategoriesService {
     }
 
     @POST
+    @Secured(Role.ADMIN)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createCategory(ProductCategoryMessage message) {
@@ -54,6 +57,7 @@ public class CategoriesService {
 
     @PUT
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateCategory(@PathParam("id") Long id, ProductCategoryMessage message) {
@@ -70,6 +74,7 @@ public class CategoriesService {
 
     @DELETE
     @Path("/{id}")
+    @Secured(Role.ADMIN)
     @Produces(MediaType.TEXT_PLAIN)
     public Response deleteCategory(@PathParam("id") Long id) {
         ProductCategory productCategory = em.find(ProductCategory.class, id);
