@@ -1,10 +1,8 @@
 package ezstore.services;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
+import ezstore.helpers.ErrorHelper;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.jboss.resteasy.util.Base64;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -13,9 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,67 +19,99 @@ import java.util.UUID;
 @Path("/media")
 public class MediaService {
 
-    private static String UPLOAD_FILE_PATH = "uploads/";
+    private static final String UPLOAD_FILE_PATH = "/data/media/";
 
     @POST
     @Path("/products")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response uploadProductImage(MultipartFormDataInput input) throws IOException {
-
-        // Get API input data
-        Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-
-        // Get file name
-        String fileName = uploadForm.get("file").get(0).getBodyAsString();
+    public Response uploadProductImage(MultipartFormDataInput multipartInput) throws IOException {
+        Map<String, List<InputPart>> uploadForm = multipartInput.getFormDataMap();
 
         // Get file data to save
         List<InputPart> inputParts = uploadForm.get("file");
 
-        for (InputPart inputPart : inputParts)
-        {
-            try {
-                // Use this header for extra processing if required
-                @SuppressWarnings("unused")
-                MultivaluedMap<String, String> header = inputPart.getHeaders();
+        if (inputParts != null) {
+            for (InputPart inputPart : inputParts) {
+                try {
 
-                // Convert the uploaded file to inputstream
-                InputStream inputStream = inputPart.getBody(Base64.InputStream.class, null);
+                    MultivaluedMap<String, String> header = inputPart.getHeaders();
+                    String fileName = getFileName(header);
 
-                byte[] bytes = IOUtils.toByteArray(inputStream);
+                    // convert the uploaded file to inputstream
+                    InputStream inputStream = inputPart.getBody(InputStream.class, null);
 
-                // Constructs upload file path
-                String targetFileName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(fileName);
-                String targetFile = UPLOAD_FILE_PATH + "products/" + targetFileName;
+                    // upload file
+                    writeFile(inputStream, "products", fileName);
 
-                writeFile(bytes, targetFile);
-                System.out.println("Success!!!!!");
+                    return Response.status(200).entity("{\"file\": \"" + fileName + "\"}").build();
 
-                return Response.ok().entity("{\"filename\": \""+targetFileName+"\"}").build();
-            } catch (Exception e) {
-                e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ErrorHelper.createResponse(e);
+                }
             }
         }
 
-        System.out.println(inputParts);
-
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
     }
 
+    /**
+     * writeFile
+     *
+     * @param inputStream multipart file inputStream
+     * @param fileName target file name
+     * @throws IOException file saving exception
+     */
+    private String writeFile(InputStream inputStream, String path, String fileName) throws IOException {
+        String filePath = UPLOAD_FILE_PATH + path + "/";
+        String qualifiedUploadFilePath = filePath + fileName;
 
-    private void writeFile(byte[] content, String filename) throws IOException {
-
-        File file = new File(filename);
-
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-
+        File file = new File(qualifiedUploadFilePath);
         FileOutputStream fop = new FileOutputStream(file);
 
-        fop.write(content);
+        int read = 0;
+        byte[] bytes = new byte[1024];
+
+        while ((read = inputStream.read(bytes)) != -1) {
+            fop.write(bytes, 0, read);
+        }
+
         fop.flush();
         fop.close();
 
+        return qualifiedUploadFilePath;
+    }
+
+    /**
+     * getFileName
+     *
+     * @param header multipart headers
+     * @return target file name
+     */
+    private String getFileName(MultivaluedMap<String, String> header) {
+        StringBuilder fileNameBuilder = new StringBuilder();
+        fileNameBuilder.append(UUID.randomUUID().toString());
+
+        String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
+
+        for (String filename : contentDisposition) {
+            if ((filename.trim().startsWith("filename"))) {
+                String[] name = filename.split("=");
+                System.out.println(name[1]);
+                String fileName = name[1].trim().replaceAll("\"", "");
+                String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+                fileNameBuilder.append(".");
+                fileNameBuilder.append(fileExtension.toLowerCase());
+            }
+        }
+
+        return fileNameBuilder.toString();
+    }
+
+    public static boolean deleteFile(String filename, String path) {
+        String qualifiedFilePath = UPLOAD_FILE_PATH + "/" + path + "/" + filename;
+        File file = new File(qualifiedFilePath);
+        return file.delete();
     }
 }

@@ -2,12 +2,15 @@ package ezstore.messages;
 
 import ezstore.helpers.Validation;
 
+import java.util.List;
+
 public class ProductOptionMessage implements Message {
     private String name;
     private String ean;
     private Double price;
     private Double discount;
     private String reference;
+    private List<Long> imagesIds;
 
     public String getName() {
         return name;
@@ -15,14 +18,6 @@ public class ProductOptionMessage implements Message {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEAN() {
-        return ean;
-    }
-
-    public void setEAN(String ean) {
-        this.ean = ean;
     }
 
     public Double getPrice() {
@@ -47,6 +42,22 @@ public class ProductOptionMessage implements Message {
 
     public void setDiscount(Double discount) {
         this.discount = discount;
+    }
+
+    public String getEan() {
+        return ean;
+    }
+
+    public void setEan(String ean) {
+        this.ean = ean;
+    }
+
+    public List<Long> getImagesIds() {
+        return imagesIds;
+    }
+
+    public void setImagesIds(List<Long> imagesIds) {
+        this.imagesIds = imagesIds;
     }
 
     @Override

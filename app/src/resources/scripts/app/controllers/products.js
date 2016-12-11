@@ -5,6 +5,7 @@ module.exports = {
     $scope.loading = true;
     $scope.error = null;
     $scope.forms = {};
+    $scope.uploading = false;
 
     // Data containers
     $scope.brand = null;
@@ -14,6 +15,7 @@ module.exports = {
 
     // Selected product container
     $scope.optionsToBeDeleted = [];
+    $scope.imagesToBeDeleted = [];
     $scope.currentProduct = null;
     $scope.currentProductIndex = null;
 
@@ -102,6 +104,18 @@ module.exports = {
       $scope.loading = true;
       api.products.find($scope.products[index].id).then((response) => {
         $scope.currentProduct = response.data;
+        $scope.currentProduct.images.map((image) => {
+          image.options = {};
+
+          $scope.currentProduct.options.forEach((opt, index) => {
+            opt.images.forEach((im) => {
+              if (im.id === image.id) {
+                image.options[index] = true;
+              }
+            });
+          });
+          return image;
+        });
         $scope.loading = false;
       }, (err) => {
         $scope.loading = false;
@@ -116,6 +130,7 @@ module.exports = {
       $scope.currentProductIndex = null;
       $scope.currentProduct = {
         options: [],
+        images: [],
         brand: null,
         category: null,
       };
@@ -131,61 +146,115 @@ module.exports = {
         categoryId: $scope.currentProduct.category.id,
       };
 
-      let defer;
+      let productDefer;
+      const imagesDefers = [];
+      const optionsDefers = [];
 
       if ($scope.action === 'edit') {
-        defer = api.products.update($scope.currentProduct.id, product);
+        productDefer = api.products.update($scope.currentProduct.id, product);
       } else {
-        defer = api.products.create(product);
+        productDefer = api.products.create(product);
       }
 
-      defer.then((res) => {
-        const defers = [];
+      // Product was saved
+      productDefer.then((res) => {
         const pId = res.data.id;
 
-        $scope.currentProduct.options.map((option) => {
-          const optionMessage = {
-            name: option.name,
-            ean: option.ean,
-            price: option.price,
-            discount: option.discount,
-            reference: option.reference,
-          };
+        $scope.currentProduct.options.map((opt) => {
+          opt.imagesIds = [];
+          return opt;
+        });
 
-          if (option.id) {
-            defers.push(
-              api.products.options.update(pId, option.id, optionMessage)
-            );
+        $scope.imagesToBeDeleted.forEach((iId) => {
+          imagesDefers.push(
+            api.products.images.delete($scope.currentProduct.id, iId)
+          );
+        });
+        $scope.imagesToBeDeleted = [];
+
+        $scope.currentProduct.images.map((image) => {
+          const defered = $q.defer();
+          imagesDefers.push(defered.promise);
+
+          if (image.id) {
+            for (const key in image.options) {
+              if (image.options.hasOwnProperty(key)) {
+                if (image.options[key] === true) {
+                  $scope.currentProduct.options[key].imagesIds.push(image.id);
+                }
+              }
+            }
+            defered.resolve();
           } else {
-            defers.push(api.products.options.create(pId, optionMessage));
+            api.products.images.create(pId, {
+              file: image.file,
+            }).then((res) => {
+              for (const key in image.options) {
+                if (image.options.hasOwnProperty(key)) {
+                  if (image.options[key] === true) {
+                    $scope.currentProduct.options[key].imagesIds
+                      .push(res.data.id);
+                  }
+                }
+              }
+              defered.resolve();
+            }, defered.reject);
           }
         });
 
-        $scope.optionsToBeDeleted.map((oId) => {
-          defers.push(
-            api.products.options.delete($scope.currentProduct.id, oId)
-          );
-        });
+        // All images was saved
+        $q.all(imagesDefers).then(() => {
+          $scope.currentProduct.options.map((option) => {
+            const optionMessage = {
+              name: option.name,
+              ean: option.ean,
+              price: option.price,
+              discount: option.discount,
+              reference: option.reference,
+              imagesIds: option.imagesIds,
+            };
 
-        $q.all(defers).then(() => {
+            if (option.id) {
+              optionsDefers.push(
+                api.products.options.update(pId, option.id, optionMessage)
+              );
+            } else {
+              optionsDefers.push(
+                api.products.options.create(pId, optionMessage)
+              );
+            }
+          });
+
+          $scope.optionsToBeDeleted.forEach((oId) => {
+            optionsDefers.push(
+              api.products.options.delete($scope.currentProduct.id, oId)
+            );
+          });
           $scope.optionsToBeDeleted = [];
 
-          api.products.find(pId).then((res) => {
-            if ($scope.action === 'edit') {
-              $scope.products[$scope.currentProductIndex] = res.data;
-            } else {
-              $scope.products.push(res.data);
-            }
-            $scope.showList();
-          }, (err) => {
+          // Options was saved
+          $q.all(optionsDefers).then(() => {
+            api.products.find(pId).then((res) => {
+              if ($scope.action === 'edit') {
+                $scope.products[$scope.currentProductIndex] = res.data;
+              } else {
+                $scope.products.push(res.data);
+              }
+
+              $scope.showList();
+            }, (err) => { // Error when find a product
+              $scope.forms.productForm.$submitted = false;
+              handleError(err);
+            });
+          }, (err) => { // Error when saving options
             $scope.forms.productForm.$submitted = false;
             handleError(err);
           });
-        }, (err) => {
+        }, (err) => { // Error when saving images
           $scope.forms.productForm.$submitted = false;
           handleError(err);
         });
-      }, (err) => {
+      }, (err) => { // Error when saving product
         $scope.forms.productForm.$submitted = false;
         handleError(err);
       });
@@ -206,20 +275,49 @@ module.exports = {
 
     // addOption
     $scope.addOption = () => {
-      $scope.currentProduct.options.push({});
+      $scope.currentProduct.options.push({images: []});
     };
 
     // deleteOption
     $scope.deleteOption = ($index) => {
       if (confirm('Are you sure?')) {
         const option = $scope.currentProduct.options[$index];
+        $scope.currentProduct.images.map((image) => {
+          let newOptions = {};
+          for (const key in image.options) {
+            if (image.options.hasOwnProperty(key)) {
+              if (parseInt(key) !== $index) {
+                if (parseInt(key) > $index) {
+                  newOptions[key-1] = image.options[key];
+                } else {
+                  newOptions[key] = image.options[key];
+                }
+              }
+            }
+          }
+          image.options = newOptions;
+          return image;
+        });
+
+        $scope.currentProduct.options.splice($index, 1);
+
         if (option.id) {
-          $scope.currentProduct.options.splice($index, 1);
           $scope.optionsToBeDeleted.push(option.id);
-        } else {
-          $scope.currentProduct.options.splice($index, 1);
         }
       }
+    };
+
+    // deleteImage
+    $scope.deleteImage = ($index) => {
+      if (confirm('Are you sure?')) {
+        const image = $scope.currentProduct.images[$index];
+        $scope.currentProduct.images.splice($index, 1);
+
+        if (image.id) {
+          $scope.imagesToBeDeleted.push(image.id);
+        }
+        console.log($scope.imagesToBeDeleted);
+      };
     };
 
     // uploadFile
@@ -228,9 +326,15 @@ module.exports = {
       $scope.imageUploadErrFile = errFiles && errFiles[0];
 
       if (file) {
-        file.upload = api.products.uploadImage($scope.currentProduct.id, file);
+        $scope.uploading = true;
+        file.upload = api.products.images.upload(file);
         file.upload.then((res) => {
-          console.log(res);
+          $scope.currentProduct.images.push({
+            file: res.data.file,
+            name: '',
+            option: null,
+          });
+          $scope.uploading = false;
         }, (err) => {
           handleError(err);
         }, (evt) => {

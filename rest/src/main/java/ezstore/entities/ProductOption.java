@@ -31,8 +31,11 @@ public class ProductOption {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Stock> stock = new ArrayList<>();
 
-    @OneToMany(targetEntity = ProductImage.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "optionId")
+    @ManyToMany(targetEntity = ProductImage.class, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "product_images_options",
+            joinColumns = @JoinColumn(name = "optionId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "imageId", referencedColumnName = "id"))
     @Fetch(value = FetchMode.SUBSELECT)
     private List<ProductImage> images = new ArrayList<>();
 

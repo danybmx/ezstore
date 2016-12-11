@@ -2,6 +2,7 @@ const helpers = require('./helpers');
 
 module.exports = function($rootScope, $location, $route, $http) {
   $rootScope.authToken = window.localStorage.getItem('authToken');
+  $rootScope.staticUrl = 'http://localhost:8080/static';
   $rootScope.loading = false;
 
   for(const name in helpers) {

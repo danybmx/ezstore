@@ -30,8 +30,13 @@ module add --name=com.mysql --resources=/opt/jboss/wildfly/environment/mysql-con
 # Add the datasource
 data-source add --name=$DATASTORE_NAME --driver-name=mysql --jndi-name=java:/$DATASTORE_NAME --connection-url=$DATASTORE_URL?useSSL=false --user-name=$DATASTORE_USER --password=$DATASTORE_PASS --use-ccm=false --max-pool-size=25 --blocking-timeout-wait-millis=5000 --enabled=true
 
+# Set undertow
+/subsystem=undertow/configuration=handler/file=StaticDirHandler/:add(cache-buffer-size=1024,cache-buffers=1024,directory-listing=false,follow-symlink=true,path=/data/media)
+/subsystem=undertow/server=default-server/host=default-host/location=\/static/:add(handler=StaticDirHandler)
+
 # Execute the batch
 run-batch
+
 EOF
 
 echo "=> Shutting down WildFly"

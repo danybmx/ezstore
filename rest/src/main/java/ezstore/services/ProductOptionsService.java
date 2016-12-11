@@ -1,9 +1,6 @@
 package ezstore.services;
 
-import ezstore.entities.Product;
-import ezstore.entities.ProductOption;
-import ezstore.entities.Stock;
-import ezstore.entities.Storage;
+import ezstore.entities.*;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
 import ezstore.messages.ProductOptionMessage;
@@ -14,6 +11,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @Path("/products/{productId}/options")
@@ -51,8 +49,18 @@ public class ProductOptionsService {
                 ProductOption productOption = new ProductOption();
                 productOption.setName(productOptionMessage.getName());
                 productOption.setPrice(productOptionMessage.getPrice());
-                productOption.setEan(productOptionMessage.getEAN());
+                productOption.setEan(productOptionMessage.getEan());
                 productOption.setReference(productOptionMessage.getReference());
+
+                List<ProductImage> productImages = new ArrayList<>();
+                if (productOptionMessage.getImagesIds().size() > 0) {
+                    for (Long imageId : productOptionMessage.getImagesIds()) {
+                        ProductImage productImage = em.find(ProductImage.class, imageId);
+                        productImages.add(productImage);
+                    }
+                }
+                productOption.setImages(productImages);
+
                 em.persist(productOption);
 
                 List<Storage> storages = em.createQuery("SELECT s FROM Storage s", Storage.class).getResultList();
@@ -89,10 +97,20 @@ public class ProductOptionsService {
         if (product != null && productOption != null) {
             Validation validation = productOptionMessage.validate();
             if (validation.isValid()) {
-                productOption.setEan(productOptionMessage.getEAN());
+                productOption.setEan(productOptionMessage.getEan());
                 productOption.setName(productOptionMessage.getName());
                 productOption.setPrice(productOptionMessage.getPrice());
                 productOption.setReference(productOptionMessage.getReference());
+
+                List<ProductImage> productImages = new ArrayList<>();
+                if (productOptionMessage.getImagesIds().size() > 0) {
+                    for (Long imageId : productOptionMessage.getImagesIds()) {
+                        ProductImage productImage = em.find(ProductImage.class, imageId);
+                        productImages.add(productImage);
+                    }
+                }
+                productOption.setImages(productImages);
+
                 em.persist(productOption);
 
                 product.updatePrice();

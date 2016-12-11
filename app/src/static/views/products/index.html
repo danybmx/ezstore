@@ -205,20 +205,52 @@
 					<a href="javascript:;" ng-click="addOption()" class="btn btn-primary"><i class="fa fa-plus"></i> Add option</a>
                     <hr>
                     <h4>Images</h4>
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th style="width: 300px">Image</th>
+								<th>Products</th>
+								<th style="width: 100px; text-align: right;"><i class="fa fa-wrench"></i></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="image in currentProduct.images">
+								<td>
+									<img ng-src="{{staticUrl + '/products/' + image.file}}" style="width: 100%;">
+								</td>
+								<td>
+									<ul>
+										<li class="checkbox" ng-repeat="option in currentProduct.options">
+										    <label>
+										      	<input ng-model="image.options[$index]" value="true" type="checkbox"> {{option.name}}
+										    </label>
+										</li>
+									</ul>
+								</td>
+								<td style="text-align: right;">
+									<a href="javascript:;" ng-click="deleteImage($index)" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
                     <a href="javascript:;"
+					   ng-show="!uploading"
 					   ng-model="imageUpload"
 					   accept="image/*"
 					   ngf-select="uploadFile($file, $invalidFiles)"
 					   class="btn btn-primary">
 						<i class="fa fa-plus"></i> Add image
 				  	</a>
-					<div style="font:smaller">{{f.name}} {{errFile.name}} {{errFile.$error}} {{errFile.$errorParam}}
-						<span class="progress" ng-show="f.progress >= 0">
-							<div style="width:{{f.progress}}%" ng-bind="f.progress + '%'"></div>
-						</span>
+					<div class="upload-progress" ng-show="uploading">
+						<div class="progress" ng-show="imageUpload.progress < 100">
+							<div class="progress-bar" style="width: {{imageUpload.progress}}%">
+								{{(imageUpload.progress || 0) + '%'}}
+							</div>
+						</div>
+						<div ng-show="imageUpload.progress === 100">
+							<i class="fa fa-spin fa-refresh"></i> Processing...
+						</div>
 					</div>
-					{{errorMsg}}
-					{{imageUploadErrFile}}
 				</div>
 				<div class="panel-footer">
 					<button class="btn btn-primary" ng-disabled="!forms.productForm.$valid || forms.productForm.$submitted" type="submit"><i class="fa fa-save"></i> Save</button>

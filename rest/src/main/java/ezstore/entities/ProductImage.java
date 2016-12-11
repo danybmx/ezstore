@@ -1,6 +1,11 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "product_images")
@@ -10,14 +15,16 @@ public class ProductImage {
     @GeneratedValue
     private Long id;
 
-    private String name;
     private String file;
+
+    @ManyToMany(mappedBy = "images", targetEntity = ProductOption.class)
+    @JsonIgnore
+    private List<ProductOption> options;
 
     public ProductImage() {
     }
 
     public ProductImage(String name, String file) {
-        this.name = name;
         this.file = file;
     }
 
@@ -29,19 +36,19 @@ public class ProductImage {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getFile() {
         return file;
     }
 
     public void setFile(String file) {
         this.file = file;
+    }
+
+    public List<ProductOption> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<ProductOption> options) {
+        this.options = options;
     }
 }

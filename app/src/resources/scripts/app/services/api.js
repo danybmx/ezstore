@@ -23,12 +23,34 @@ module.exports = function($rootScope, $http, Upload) {
     delete: (id) => {
       return $http.delete(apiUrl + '/products/' + id, options);
     },
-    uploadImage: (file) => {
-      return Upload.upload({
-        url: apiUrl + '/media/products',
-        data: {file: file},
-        options: options,
-      });
+    images: {
+      upload: (file) => {
+        return Upload.upload({
+          url: apiUrl + '/media/products',
+          data: {file: file},
+          options: options,
+        });
+      },
+      update: (productId, id, image) => {
+        return $http.put(
+          apiUrl + '/products/' + productId + '/images/' + id,
+          image,
+          options
+        );
+      },
+      create: (productId, image) => {
+        return $http.post(
+          apiUrl + '/products/' + productId + '/images',
+          image,
+          options
+        );
+      },
+      delete: (productId, id) => {
+        return $http.delete(
+          apiUrl + '/products/' + productId + '/images/' + id,
+          options
+        );
+      },
     },
     options: {
       update: (productId, id, option) => {
