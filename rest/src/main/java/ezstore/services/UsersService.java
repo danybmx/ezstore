@@ -35,9 +35,46 @@ public class UsersService {
 
                 User user = new User();
                 user.setEmail(userMessage.getEmail());
+                user.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
                 user.setFirstName(userMessage.getFirstName());
                 user.setLastName(userMessage.getLastName());
+                user.setPhone(userMessage.getPhone());
+                user.setBornDate(userMessage.getBornDate());
+                user.setVAT(userMessage.getVAT());
+                em.persist(user);
+
+                return Response.ok(user).build();
+
+            } else {
+                return ErrorHelper.createResponse(validation);
+            }
+
+        }
+
+        return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+
+    }
+
+    @PUT
+    @Secured
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public Response updateUser(@PathParam("id") Long id, UserMessage userMessage) {
+
+        if (userMessage != null) {
+            Validation validation = userMessage.validate();
+
+            if (validation.isValid()) {
+
+                User user = new User();
+                user.setEmail(userMessage.getEmail());
                 user.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
+                user.setFirstName(userMessage.getFirstName());
+                user.setLastName(userMessage.getLastName());
+                user.setPhone(userMessage.getPhone());
+                user.setBornDate(userMessage.getBornDate());
+                user.setVAT(userMessage.getVAT());
                 em.persist(user);
 
                 return Response.ok(user).build();

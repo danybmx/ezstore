@@ -1,5 +1,7 @@
 package ezstore.services;
 
+import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.*;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
@@ -35,6 +37,7 @@ public class ProductOptionsService {
     }
 
     @POST
+    @Secured(Role.ADMIN)
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -84,6 +87,7 @@ public class ProductOptionsService {
     }
 
     @PUT
+    @Secured(Role.ADMIN)
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -126,6 +130,7 @@ public class ProductOptionsService {
     }
 
     @DELETE
+    @Secured(Role.ADMIN)
     @Path("/{id}")
     public Response removeProductOption(@PathParam("id") Long id) {
         ProductOption option = em.find(ProductOption.class, id);

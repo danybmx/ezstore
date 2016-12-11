@@ -1,5 +1,7 @@
 package ezstore.services;
 
+import ezstore.annotations.Secured;
+import ezstore.auth.Role;
 import ezstore.entities.Product;
 import ezstore.entities.ProductBrand;
 import ezstore.entities.ProductCategory;
@@ -40,6 +42,7 @@ public class ProductsService {
     }
 
     @POST
+    @Secured(Role.ADMIN)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createProduct(ProductMessage productMessage) {
@@ -62,6 +65,7 @@ public class ProductsService {
     }
 
     @PUT
+    @Secured(Role.ADMIN)
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -81,6 +85,7 @@ public class ProductsService {
     }
 
     @DELETE
+    @Secured(Role.ADMIN)
     @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
     public Response deleteProduct(@PathParam("id") Long id) {

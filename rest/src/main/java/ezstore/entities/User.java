@@ -31,6 +31,8 @@ public class User {
 
     private String VAT;
 
+    private List<Role> roles;
+
     @OneToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "defaultBillingAddressId")
     private Address defaultBillingAddress;

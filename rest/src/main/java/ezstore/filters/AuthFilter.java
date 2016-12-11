@@ -54,7 +54,7 @@ public class AuthFilter implements ContainerRequestFilter {
 
                     @Override
                     public boolean isUserInRole(String role) {
-                        return true;
+                        return user.getRoles()
                     }
 
                     @Override
