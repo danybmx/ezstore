@@ -7,6 +7,7 @@ import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
 import ezstore.messages.ProductOptionMessage;
 
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;

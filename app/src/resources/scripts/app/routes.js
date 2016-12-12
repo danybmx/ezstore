@@ -40,6 +40,14 @@ module.exports = {
   },
 
   /**
+   * Users
+   */
+  '/users': {
+    templateUrl: 'static/views/users/index.html',
+    controller: 'usersController',
+  },
+
+  /**
    * Auth
    */
   '/login': {

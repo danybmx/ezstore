@@ -8,27 +8,40 @@ import ezstore.helpers.ErrorHelper;
 import javax.annotation.Priority;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthFilter implements ContainerRequestFilter {
 
-    @PersistenceContext
+    @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager em;
+
+    @Context
+    ResourceInfo resourceInfo;
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
+        // Method
+        Method method = resourceInfo.getResourceMethod();
+
         // Get the HTTP Authorization header from the request
         String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
@@ -41,6 +54,21 @@ public class AuthFilter implements ContainerRequestFilter {
 
             try {
                 User user = validateToken(token);
+
+                Secured securedAnnotation = method.getAnnotation(Secured.class);
+                Set<Role> roleSet = new HashSet<>(Arrays.asList(securedAnnotation.value()));
+
+                if (roleSet.size() > 0) {
+                    boolean hasAccess = false;
+                    for (Role role : roleSet) {
+                        if (user.hasRole(role)) {
+                            hasAccess = true;
+                        }
+                    }
+                    if ( ! hasAccess) {
+                        requestContext.abortWith(ErrorHelper.createResponse(Response.Status.UNAUTHORIZED));
+                    }
+                }
 
                 requestContext.setSecurityContext(new SecurityContext() {
                     @Override
@@ -69,7 +97,8 @@ public class AuthFilter implements ContainerRequestFilter {
                     }
                 });
             } catch (Exception e) {
-                requestContext.abortWith(ErrorHelper.createResponse(Response.Status.UNAUTHORIZED));
+                e.printStackTrace();
+                requestContext.abortWith(ErrorHelper.createResponse(Response.Status.FORBIDDEN));
             }
         }
     }

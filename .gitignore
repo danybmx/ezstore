@@ -4,6 +4,7 @@ gradle/
 build/
 out/
 classes/
+media/*
 deployments/
 node_modules/
 npm-debug.log

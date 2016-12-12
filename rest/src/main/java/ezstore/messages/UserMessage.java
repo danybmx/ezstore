@@ -1,8 +1,13 @@
 package ezstore.messages;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ezstore.auth.Role;
 import ezstore.helpers.Validation;
 
+import javax.xml.bind.DatatypeConverter;
 import java.sql.Date;
+import java.util.Calendar;
+import java.util.Set;
 
 public class UserMessage implements Message {
 
@@ -12,10 +17,18 @@ public class UserMessage implements Message {
     private String lastName;
     private String phone;
     private String bornDate;
-    private String VAT;
+    private String vat;
+    private Set<Role> roles;
+
+    @JsonIgnore
+    private boolean update = false;
 
     public UserMessage() {
 
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
     }
 
     public String getEmail() {
@@ -59,19 +72,32 @@ public class UserMessage implements Message {
     }
 
     public Date getBornDate() {
-        return Date.valueOf(bornDate);
+        if (bornDate != null) {
+            Calendar calendar = DatatypeConverter.parseDate(bornDate);
+            return new Date(calendar.getTimeInMillis());
+        } else {
+            return null;
+        }
     }
 
     public void setBornDate(String bornDate) {
         this.bornDate = bornDate;
     }
 
-    public String getVAT() {
-        return VAT;
+    public String getVat() {
+        return vat;
     }
 
-    public void setVAT(String VAT) {
-        this.VAT = VAT;
+    public void setVat(String vat) {
+        this.vat = vat;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -82,10 +108,6 @@ public class UserMessage implements Message {
             validation.setValid(false);
             validation.getReasons().put("email", "Email cannot be empty");
         }
-        if (password == null || password.trim().length() < 1) {
-            validation.setValid(false);
-            validation.getReasons().put("password", "Password cannot be empty");
-        }
         if (firstName == null || firstName.trim().length() < 1) {
             validation.setValid(false);
             validation.getReasons().put("firstName", "First name cannot be empty");
@@ -93,6 +115,13 @@ public class UserMessage implements Message {
         if (lastName == null || lastName.trim().length() < 1) {
             validation.setValid(false);
             validation.getReasons().put("lastName", "Last name cannot be empty");
+        }
+
+        if (!this.update) {
+            if (password == null || password.trim().length() < 1) {
+                validation.setValid(false);
+                validation.getReasons().put("password", "Password cannot be empty");
+            }
         }
 
         return validation;

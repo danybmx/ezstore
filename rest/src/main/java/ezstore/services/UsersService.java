@@ -1,6 +1,7 @@
 package ezstore.services;
 
 import ezstore.auth.Role;
+import ezstore.entities.ProductBrand;
 import ezstore.entities.User;
 import ezstore.annotations.Secured;
 import ezstore.helpers.AuthorizedServiceHelper;
@@ -18,6 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.*;
 
 @Path("/users")
 @Transactional
@@ -50,6 +52,49 @@ public class UsersService extends AuthorizedServiceHelper {
         return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
     }
 
+    @GET
+    @Secured
+    @Path("/me")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCurrentUser(@Context SecurityContext securityContext) {
+        return Response.ok(getCurrentUser()).build();
+    }
+
+    @GET
+    @Path("/roles")
+    @Secured(Role.ADMIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<Integer, String> getAvailableRoles() {
+        Map<Integer, String> availableRoles = new HashMap<>();
+        int index = 0;
+
+        for (Role role : Role.values()) {
+            availableRoles.put(index++, role.toString());
+        }
+
+        return availableRoles;
+    }
+
+    @GET
+    @Secured(Role.ADMIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<User> getUsers() {
+        return em.createQuery("SELECT u FROM User u", User.class).getResultList();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Secured(Role.ADMIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUser(@PathParam("id") Long id) {
+        User user = em.find(User.class, id);
+        if (user != null) {
+            return Response.ok(user).build();
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
+    }
+
     @PUT
     @Secured
     @Consumes(MediaType.APPLICATION_JSON)
@@ -73,6 +118,7 @@ public class UsersService extends AuthorizedServiceHelper {
         if (this.getCurrentUser().getId().equals(id) || this.getCurrentUser().hasRole(Role.ADMIN)) {
             if (user != null) {
                 if (userMessage != null) {
+                    userMessage.setUpdate(true);
                     Validation validation = userMessage.validate();
 
                     if (validation.isValid()) {
@@ -95,13 +141,5 @@ public class UsersService extends AuthorizedServiceHelper {
         } else {
             return ErrorHelper.createResponse(Response.Status.FORBIDDEN);
         }
-    }
-
-    @GET
-    @Secured
-    @Path("/me")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getCurrentUser(@Context SecurityContext securityContext) {
-        return Response.ok(getCurrentUser()).build();
     }
 }

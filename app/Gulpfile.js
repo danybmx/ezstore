@@ -43,7 +43,6 @@ const renderBrowserifyErrors = function(err) {
     gutil.log(chalk.red(err.name) +
       ': ' + chalk.yellow(err.message));
   }
-  this.emit('end');
 };
 
 /**
@@ -125,6 +124,7 @@ gulp.task('styles', () => {
     .pipe(less({
       paths: [path.join(rootPath, 'node_modules'), path.join(stylesPath, 'includes')],
     }))
+    .on('error', renderBrowserifyErrors)
     .pipe(rename('bundle.css'))
     .pipe(gulp.dest(destPath + '/css'));
 

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ezstore.auth.PasswordHelper;
 import ezstore.auth.Role;
 import ezstore.messages.UserMessage;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -33,11 +35,10 @@ public class User {
     private String phone;
     private Date bornDate;
 
-    private String VAT;
+    private String vat;
 
-    @ElementCollection
-    @JoinTable(name = "users_roles")
-    @JoinColumn(name = "userId")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @JoinTable(name = "roles_users", joinColumns = @JoinColumn(name = "userId"))
     private Set<Role> roles;
 
     @OneToOne(targetEntity = Address.class, fetch = FetchType.EAGER)
@@ -50,6 +51,7 @@ public class User {
 
     @OneToMany(targetEntity = Address.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Address> addresses;
 
     public User() {
@@ -57,12 +59,17 @@ public class User {
 
     public void applyMessage(UserMessage userMessage) {
         this.setEmail(userMessage.getEmail());
-        this.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
+        if (userMessage.getPassword() != null && ! userMessage.getPassword().isEmpty()) {
+            this.setPassword(PasswordHelper.getSaltedHash(userMessage.getPassword()));
+            this.setToken(null);
+        }
+
         this.setFirstName(userMessage.getFirstName());
         this.setLastName(userMessage.getLastName());
         this.setPhone(userMessage.getPhone());
         this.setBornDate(userMessage.getBornDate());
-        this.setVAT(userMessage.getVAT());
+        this.setVat(userMessage.getVat());
+        this.setRoles(userMessage.getRoles());
     }
 
     public Long getId() {
@@ -129,12 +136,12 @@ public class User {
         this.bornDate = bornDate;
     }
 
-    public String getVAT() {
-        return VAT;
+    public String getVat() {
+        return vat;
     }
 
-    public void setVAT(String VAT) {
-        this.VAT = VAT;
+    public void setVat(String vat) {
+        this.vat = vat;
     }
 
     public Address getDefaultBillingAddress() {
@@ -170,8 +177,10 @@ public class User {
     }
 
     public boolean hasRole(Role role) {
-        if (this.roles.contains(Role.OWNER)) return true;
-        if (this.roles.contains(role)) return true;
+        if (this.roles.size() > 0) {
+            if (this.roles.contains(Role.OWNER)) return true;
+            if (this.roles.contains(role)) return true;
+        }
         return false;
     }
 }

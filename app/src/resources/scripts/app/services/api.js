@@ -138,4 +138,38 @@ module.exports = function($rootScope, $http, Upload) {
       return $http.delete(apiUrl + '/storages/' + id, options);
     },
   };
+
+  this.users = {
+    roles: () => {
+      return $http.get(apiUrl + '/users/roles', options);
+    },
+    all: () => {
+      return $http.get(apiUrl + '/users', options);
+    },
+    find: (id) => {
+      return $http.get(apiUrl + '/users/' + id, options);
+    },
+    create: (brand) => {
+      return $http.post(apiUrl + '/users', brand, options);
+    },
+    update: (id, brand) => {
+      return $http.put(apiUrl + '/users/' + id, brand, options);
+    },
+    delete: (id) => {
+      return $http.delete(apiUrl + '/users/' + id, options);
+    },
+    addresses: {
+      create: (uId, address) => {
+        return $http.post(apiUrl + '/addresses/' + uId, address, options);
+      },
+      update: (uId, aId, address) => {
+        return $http.put(
+          apiUrl + '/addresses/' + uId + '/' + aId, address, options
+        );
+      },
+      delete: (uId, aId) => {
+        return $http.delete(apiUrl + '/addresses/' + uId + '/' + aId, options);
+      },
+    },
+  };
 };

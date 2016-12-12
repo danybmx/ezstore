@@ -9,5 +9,6 @@ require('angular');
 require('angular-route');
 require('angular-animate');
 require('angular-touch');
-require('angular-bootstrap');
+require('angular-ui-bootstrap');
 require('ng-file-upload');
+require('checklist-model');

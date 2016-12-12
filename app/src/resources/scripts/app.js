@@ -10,6 +10,7 @@ const app = angular.module('managementApp', [
   'ngTouch',
   'ui.bootstrap',
   'ngFileUpload',
+  'checklist-model',
 ]);
 
 // Add controllers dynamically
