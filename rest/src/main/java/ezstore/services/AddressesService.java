@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.List;
+import java.util.Objects;
 
 @Secured
 @Transactional
@@ -82,11 +83,39 @@ public class AddressesService extends AuthorizedServiceHelper {
         return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
+    @PUT
+    @Secured
+    @Path("/default/{addressType}/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response updateDefaultAddress(@PathParam("addressType") String addressType,
+                                         @PathParam("id") Long id) {
+        Address address = em.find(Address.class, id);
+        User user = getCurrentUser();
+
+        if (address != null && user != null && user.getAddresses().contains(address)) {
+            switch (addressType) {
+                case "billing":
+                    user.setDefaultBillingAddress(address);
+                    break;
+                case "shipping":
+                    user.setDefaultShippingAddress(address);
+                    break;
+                default:
+                    return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+            }
+
+            em.persist(user);
+            return Response.ok().build();
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
+    }
+
     @DELETE
     @Secured
     @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response deleteCurrentUserAddress(@PathParam("id") Long id, AddressMessage message) {
+    public Response deleteCurrentUserAddress(@PathParam("id") Long id) {
         User user = getCurrentUser();
         Address address = em.find(Address.class, id);
 
@@ -140,7 +169,7 @@ public class AddressesService extends AuthorizedServiceHelper {
     }
 
     @PUT
-    @Secured
+    @Secured(Role.ADMIN)
     @Path("/{userId}/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -158,10 +187,10 @@ public class AddressesService extends AuthorizedServiceHelper {
     }
 
     @DELETE
-    @Secured
+    @Secured(Role.ADMIN)
     @Path("/{userId}/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response deleteUserAddress(@PathParam("userId") Long userId, @PathParam("id") Long id, AddressMessage message) {
+    public Response deleteUserAddress(@PathParam("userId") Long userId, @PathParam("id") Long id) {
         Address address = em.find(Address.class, id);
         User user = em.find(User.class, userId);
 
@@ -177,6 +206,35 @@ public class AddressesService extends AuthorizedServiceHelper {
 
             em.persist(user);
             em.remove(address);
+            return Response.ok().build();
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
+    }
+
+    @PUT
+    @Secured(Role.ADMIN)
+    @Path("/default/{addressType}/{userId}/{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response updateDefaultAddress(@PathParam("addressType") String addressType,
+                                         @PathParam("userId") Long userId,
+                                         @PathParam("id") Long id) {
+        Address address = em.find(Address.class, id);
+        User user = em.find(User.class, userId);
+
+        if (address != null && user != null && user.getAddresses().contains(address)) {
+            switch (addressType) {
+                case "billing":
+                    user.setDefaultBillingAddress(address);
+                    break;
+                case "shipping":
+                    user.setDefaultShippingAddress(address);
+                    break;
+                default:
+                    return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+            }
+
+            em.persist(user);
             return Response.ok().build();
         }
 

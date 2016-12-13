@@ -196,18 +196,20 @@ module.exports = {
     };
 
     $scope.deleteAddress = (index) => {
-      const address = $scope.currentUser.addresses[index];
-      $scope.loading = true;
+      if (confirm('Are you sure?')) {
+        const address = $scope.currentUser.addresses[index];
+        $scope.loading = true;
 
-      api.users.addresses.delete(
-        $scope.currentUser.id,
-        address.id
-      ).then((res) => {
-        $scope.currentUsers.addresses.splice(index, 1);
-        $scope.loading = false;
-      }, (err) => {
-        handleError(err);
-      });
+        api.users.addresses.delete(
+          $scope.currentUser.id,
+          address.id
+        ).then((res) => {
+          $scope.currentUser.addresses.splice(index, 1);
+          $scope.loading = false;
+        }, (err) => {
+          handleError(err);
+        });
+      }
     };
 
     $scope.saveAddress = () => {
@@ -239,6 +241,22 @@ module.exports = {
       }, (err) => {
         handleError(err);
       });
+    };
+
+    $scope.updateDefaultBillingAddress = () => {
+      api.users.addresses.setDefaultAddress(
+        'billing',
+        $scope.currentUser.id,
+        $scope.currentUser.defaultBillingAddressId
+      );
+    };
+
+    $scope.updateDefaultShippingAddress = () => {
+      api.users.addresses.setDefaultAddress(
+        'shipping',
+        $scope.currentUser.id,
+        $scope.currentUser.defaultShippingAddressId
+      );
     };
 
     // formatAddress - Helper

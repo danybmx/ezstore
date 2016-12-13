@@ -6,10 +6,10 @@
 		</h1>
 		<ol class="breadcrumb">
 			<li class="breadcrumb-item active" ng-if="isCurrentAction('list')">
-				<i class="fa fa-folder"></i> Users
+				<i class="fa fa-users"></i> Users
 			</li>
 			<li class="breadcrumb-item" ng-if="!isCurrentAction('list')">
-				<a href="" ng-click="showList()"><i class="fa fa-star"></i> Users</a>
+				<a href="" ng-click="showList()"><i class="fa fa-users"></i> Users</a>
 			</li>
 			<li class="breadcrumb-item active" ng-if="isCurrentAction('edit')">
 				<i class="fa fa-pencil"></i> Edit
@@ -125,18 +125,18 @@
 							<label for="inputBornDate" class="control-label">Born date</label>
 							<div class="input-group">
 								<input type="text"
-											 uib-datepicker-popup
-											 datepicker-options="dateOptions"
-											 is-open="bornDatePicker.open"
-											 show-button-bar="false"
-											 id="inputBornDate"
-											 placeholder="YYYY-MM-DD"
-											 ng-model="currentUser.bornDate"
-											 class="form-control">
+									   uib-datepicker-popup
+									   datepicker-options="dateOptions"
+									   is-open="bornDatePicker.open"
+									   show-button-bar="false"
+									   id="inputBornDate"
+									   placeholder="YYYY-MM-DD"
+									   ng-model="currentUser.bornDate"
+									   class="form-control">
 								<span class="input-group-btn">
 									<button type="button"
-													class="btn btn-default"
-													ng-click="bornDatePicker.open = !!!bornDatePicker.open">
+											class="btn btn-default"
+											ng-click="bornDatePicker.open = !!!bornDatePicker.open">
 									<i class="fa fa-calendar"></i>
 								</button>
 							</span>
@@ -190,8 +190,8 @@
 							<tr ng-repeat="address in currentUser.addresses">
 								<td>{{address.name}}</td>
 								<td>{{formatAddress(address)}}</td>
-								<td style="text-align: center"><input ng-model="currentUser.defaultBillingAddressId" value="{{address.id}}" type="radio"></td>
-								<td style="text-align: center"><input ng-model="currentUser.defaultShippingAddressId" value="{{address.id}}" type="radio"></td>
+								<td style="text-align: center"><input ng-change="updateDefaultBillingAddress()" ng-model="currentUser.defaultBillingAddressId" value="{{address.id}}" type="radio"></td>
+								<td style="text-align: center"><input ng-change="updateDefaultShippingAddress()" ng-model="currentUser.defaultShippingAddressId" value="{{address.id}}" type="radio"></td>
 								<td style="text-align: right">
 									<a class="btn btn-xs btn-primary" ng-click="editAddress($index)" uib-tooltip="Edit address">
 										<i class="fa fa-pencil"></i>

@@ -170,6 +170,12 @@ module.exports = function($rootScope, $http, Upload) {
       delete: (uId, aId) => {
         return $http.delete(apiUrl + '/addresses/' + uId + '/' + aId, options);
       },
+      setDefaultAddress: (addressType, uId, aId) => {
+        return $http.put(
+          `${apiUrl}/addresses/default/${addressType}/${uId}/${aId}`,
+          options
+        );
+      },
     },
   };
 };
