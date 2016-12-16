@@ -149,11 +149,11 @@ module.exports = function($rootScope, $http, Upload) {
     find: (id) => {
       return $http.get(apiUrl + '/users/' + id, options);
     },
-    create: (brand) => {
-      return $http.post(apiUrl + '/users', brand, options);
+    create: (user) => {
+      return $http.post(apiUrl + '/users', user, options);
     },
-    update: (id, brand) => {
-      return $http.put(apiUrl + '/users/' + id, brand, options);
+    update: (id, user) => {
+      return $http.put(apiUrl + '/users/' + id, user, options);
     },
     delete: (id) => {
       return $http.delete(apiUrl + '/users/' + id, options);
@@ -176,6 +176,24 @@ module.exports = function($rootScope, $http, Upload) {
           options
         );
       },
+    },
+  };
+
+  this.orders = {
+    all: () => {
+      return $http.get(apiUrl + '/orders/mng', options);
+    },
+    find: (id) => {
+      return $http.get(apiUrl + '/orders/mng/' + id, options);
+    },
+    create: (order) => {
+      return $http.post(apiUrl + '/orders/mng', order, options);
+    },
+    update: (id, order) => {
+      return $http.put(apiUrl + '/orders/mng/' + id, order, options);
+    },
+    delete: (id) => {
+      return $http.delete(apiUrl + '/orders/mng/' + id, options);
     },
   };
 };

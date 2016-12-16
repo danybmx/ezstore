@@ -1,4 +1,4 @@
-package ezstore.auth;
+package ezstore.entities.structs;
 
 public enum Role {
     USER,

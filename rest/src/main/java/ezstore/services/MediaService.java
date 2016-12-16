@@ -1,7 +1,7 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.helpers.ErrorHelper;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;

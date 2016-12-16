@@ -1,7 +1,7 @@
 package ezstore.filters;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.entities.User;
 import ezstore.helpers.ErrorHelper;
 
@@ -9,7 +9,6 @@ import javax.annotation.Priority;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;

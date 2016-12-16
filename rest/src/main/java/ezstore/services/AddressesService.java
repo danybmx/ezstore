@@ -1,7 +1,7 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.entities.Address;
 import ezstore.entities.User;
 import ezstore.helpers.AuthorizedServiceHelper;
@@ -17,8 +17,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.List;
-import java.util.Objects;
 
 @Secured
 @Transactional

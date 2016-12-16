@@ -1,7 +1,7 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.entities.ProductOption;
 import ezstore.entities.Stock;
 import ezstore.entities.Storage;

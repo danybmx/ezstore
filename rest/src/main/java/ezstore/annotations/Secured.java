@@ -1,6 +1,6 @@
 package ezstore.annotations;
 
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.ElementType;

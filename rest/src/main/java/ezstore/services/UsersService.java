@@ -1,14 +1,12 @@
 package ezstore.services;
 
-import ezstore.auth.Role;
-import ezstore.entities.ProductBrand;
+import ezstore.entities.structs.Role;
 import ezstore.entities.User;
 import ezstore.annotations.Secured;
 import ezstore.helpers.AuthorizedServiceHelper;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
 import ezstore.messages.UserMessage;
-import org.hibernate.Hibernate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

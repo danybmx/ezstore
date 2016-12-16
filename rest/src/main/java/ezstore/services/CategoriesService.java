@@ -1,7 +1,7 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.entities.Product;
 import ezstore.entities.ProductCategory;
 import ezstore.helpers.ErrorHelper;
@@ -9,7 +9,6 @@ import ezstore.messages.ProductCategoryMessage;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

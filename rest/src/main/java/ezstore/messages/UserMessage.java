@@ -1,7 +1,7 @@
 package ezstore.messages;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.helpers.Validation;
 
 import javax.xml.bind.DatatypeConverter;

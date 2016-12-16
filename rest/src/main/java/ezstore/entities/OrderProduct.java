@@ -1,5 +1,7 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,15 +15,16 @@ public class OrderProduct {
     private String reference;
     private String ean;
     private String name;
-    private String image;
-    private Double discount;
     private Double price;
+    private Integer units;
+    private Double discount;
+    private Double total;
 
-    @OneToOne(targetEntity = Product.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @OneToOne(targetEntity = Product.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "productId")
     private Product product;
 
-    @OneToOne(targetEntity = ProductOption.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @OneToOne(targetEntity = ProductOption.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "optionId")
     private ProductOption option;
 
@@ -76,12 +79,20 @@ public class OrderProduct {
         this.price = price;
     }
 
-    public String getImage() {
-        return image;
+    public Integer getUnits() {
+        return units;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setUnits(Integer units) {
+        this.units = units;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
     }
 
     public Product getProduct() {

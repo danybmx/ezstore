@@ -1,7 +1,7 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.entities.*;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
@@ -14,7 +14,6 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 
 @Path("/products/{productId}/images")
 @Transactional

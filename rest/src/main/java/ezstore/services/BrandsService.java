@@ -1,7 +1,7 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.entities.Product;
 import ezstore.entities.ProductBrand;
 import ezstore.helpers.AuthorizedServiceHelper;

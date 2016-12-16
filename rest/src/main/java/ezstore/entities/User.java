@@ -2,7 +2,7 @@ package ezstore.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import ezstore.auth.PasswordHelper;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.messages.UserMessage;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;

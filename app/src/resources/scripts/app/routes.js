@@ -48,6 +48,14 @@ module.exports = {
   },
 
   /**
+   * Orders
+   */
+  '/orders': {
+    templateUrl: 'static/views/orders/index.html',
+    controller: 'ordersController',
+  },
+
+  /**
    * Auth
    */
   '/login': {

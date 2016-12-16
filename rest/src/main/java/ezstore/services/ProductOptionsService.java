@@ -1,13 +1,12 @@
 package ezstore.services;
 
 import ezstore.annotations.Secured;
-import ezstore.auth.Role;
+import ezstore.entities.structs.Role;
 import ezstore.entities.*;
 import ezstore.helpers.ErrorHelper;
 import ezstore.helpers.Validation;
 import ezstore.messages.ProductOptionMessage;
 
-import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
