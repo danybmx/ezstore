@@ -86,8 +86,35 @@
                                 <th style="width: 100px; text-align: right"><i class="fa fa-wrench"></i></th>
                             </tr>
                         </thead>
-                        <tbody ng-repeat="order in orders">
-                            <tr>
+                        <tbody>
+							<tr>
+								<td>
+									<select id="inputOrderType"
+											ng-options="value for (key, value) in orderTypes"
+											ng-model="orderFilter.orderType"
+											class="form-control input-sm"
+											required>
+										<option value="">Select one</option>
+									</select>
+								</td>
+								<td>
+									<select id="inputStorage"
+											ng-options="storage as storage.name for storage in storages track by storage.id"
+											ng-model="orderFilter.storage"
+											class="form-control input-sm"
+											required>
+										<option value="">Select one</option>
+									</select>
+								</td>
+								<td>
+									<input type="text" ng-model="orderFilter.customerName" class="form-control input-sm">
+								</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+							</tr>
+                            <tr ng-repeat="order in filteredOrders = (orders | filter:orderFilter)">
 								<td>{{order.reference}}</td>
 								<td>{{order.storage.name}}</td>
                                 <td>
@@ -101,10 +128,10 @@
 									<i class="fa fa-times" ng-hide="order.paid"></i>
 								</td>
                                 <td style="text-align: right">
-                                    <a class="btn btn-xs btn-primary" ng-click="editOrder($index)" uib-tooltip="Edit">
+                                    <a class="btn btn-xs btn-primary" ng-click="editOrder(order.id)" uib-tooltip="Edit">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a class="btn btn-xs btn-danger" ng-click="deleteOrder($index)" uib-tooltip="Delete">
+                                    <a class="btn btn-xs btn-danger" ng-click="deleteOrder(order.id)" uib-tooltip="Delete">
                                         <i class="fa fa-times"></i>
                                     </a>
                                 </td>

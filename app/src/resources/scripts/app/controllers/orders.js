@@ -133,7 +133,16 @@ module.exports = {
       });
     };
 
-    $scope.editOrder = ($index) => {
+    const getOrderIndex = (id) => {
+      for (let i = 0; i < $scope.orders.length; i++) {
+        if ($scope.orders[i].id === parseInt(id)) {
+          return i;
+        }
+      }
+    };
+
+    $scope.editOrder = (id) => {
+      const $index = getOrderIndex(id);
       loadProducts();
 
       api.orders.find($scope.orders[$index].id).then((res) => {
@@ -231,7 +240,8 @@ module.exports = {
       $scope.currentOrder.total = Math.round(total * 100) / 100;
     };
 
-    $scope.deleteOrder = ($index) => {
+    $scope.deleteOrder = (id) => {
+      const $index = getOrderIndex(id);
       if (confirm('Are you sure?')) {
         api.orders.delete($scope.orders[$index].id).then((res) => {
           $scope.orders.splice($index, 1);
