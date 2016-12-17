@@ -1,18 +1,53 @@
 module.exports = {
-  ordersController: function($scope, $q, $timeout, $filter, api) {
+  ordersController: function(
+      $scope,
+      $q,
+      $anchorScroll,
+      $timeout,
+      $filter,
+      api) {
     // Default values
     $scope.action = 'list';
     $scope.loading = true;
     $scope.error = null;
     $scope.forms = {};
+    $scope.options = {
+      showTaxes: false,
+    };
 
     // Data containers
     $scope.orders = null;
     $scope.products = null;
+    $scope.orderTypes = null;
 
     // Selected order container
+    $scope.createOrderOptions = {};
     $scope.currentOrder = null;
     $scope.currentOrderIndex = null;
+
+    // handleError
+    const handleError = (err) => {
+      if (err.data.reasons) {
+        $scope.error = err.data.reasons;
+      } else {
+        $scope.error = err.data.message;
+      }
+
+      throw new Error(err.data.message);
+    };
+
+    // Check if can create an order
+    $scope.canCreateOrder = () => {
+      return $scope.createOrderOptions.storage
+        && $scope.createOrderOptions.orderType;
+    };
+
+    // Watch errors
+    $scope.$watch('error', (value) => {
+      if (value !== '') {
+        $anchorScroll('header');
+      }
+    });
 
     // Loda data
     $scope.loadData = () => {
@@ -22,7 +57,19 @@ module.exports = {
         $scope.orders = res.data;
       }, (err) => {
         $scope.orders = null;
-        $scope.error = `Error while requesting ${err.config.url}`;
+        handleError(err);
+      });
+
+      api.orders.types().then((res) => {
+        $scope.orderTypes = res.data;
+      }, (err) => {
+        handleError(err);
+      });
+
+      api.storages.all().then((res) => {
+        $scope.storages = res.data;
+      }, (err) => {
+        handleError(err);
       });
     };
     $scope.loadData();
@@ -32,10 +79,24 @@ module.exports = {
       return $scope.action === action;
     };
 
+    $scope.getPrice = (p) => {
+      let price = p;
+      if ($scope.options.showTaxes) {
+        if ($scope.currentOrder.taxes) {
+          $scope.currentOrder.taxes.map((tax) => {
+            price += Math.round(p * tax.value) / 100;
+            return tax;
+          });
+        }
+      }
+      return price;
+    };
+
     $scope.showList = () => {
       $scope.currentOrderIndex = null;
       $scope.currentOrder = null;
       $scope.action = 'list';
+      $scope.error = null;
     };
 
     const loadProducts = () => {
@@ -68,8 +129,7 @@ module.exports = {
           }
         }
       }, (err) => {
-        $scope.orders = null;
-        $scope.error = `Error while requesting ${err.config.url}`;
+        handleError(err);
       });
     };
 
@@ -78,9 +138,13 @@ module.exports = {
 
       api.orders.find($scope.orders[$index].id).then((res) => {
         $scope.currentOrder = res.data;
+        $scope.currentOrderIndex = $index;
+        if (res.data.billingAddress.fullAddress
+          === res.data.shippingAddress.fullAddress) {
+          $scope.currentOrder.useBillingAddressForShipping = true;
+        }
       }, (err) => {
-        // TODO ADD HANDLER
-        console.log(err);
+        handleError(err);
       });
 
       $scope.currentOrder = $scope.orders[$index];
@@ -90,7 +154,7 @@ module.exports = {
     $scope.createOrder = () => {
       loadProducts();
       $scope.currentOrder = {
-        customer: {},
+        customer: null,
         billingAddress: {},
         shippingAddress: {},
         useBillingAddressForShipping: true,
@@ -99,6 +163,8 @@ module.exports = {
         total: 0,
         shipping: 0,
         discount: 0,
+        storage: $scope.createOrderOptions.storage,
+        orderType: $scope.createOrderOptions.orderType,
         taxes: [
           {
             name: 'IVA',
@@ -165,27 +231,46 @@ module.exports = {
       $scope.currentOrder.total = Math.round(total * 100) / 100;
     };
 
+    $scope.deleteOrder = ($index) => {
+      if (confirm('Are you sure?')) {
+        api.orders.delete($scope.orders[$index].id).then((res) => {
+          $scope.orders.splice($index, 1);
+        }, (err) => {
+          handleError(err);
+        });
+      }
+    };
+
     $scope.saveOrder = () => {
       let defer;
+
+      let shippingAddress = $scope.currentOrder.shippingAddress;
+      if ($scope.currentOrder.useBillingAddressForShipping) {
+        shippingAddress = Object.assign({},
+          $scope.currentOrder.billingAddress,
+          {
+            id: $scope.currentOrder.shippingAddress.id || null,
+          }
+        );
+      }
+
       const order = {
         id: $scope.currentOrder.id,
+        storage: $scope.currentOrder.storage,
         customer: $scope.currentOrder.customer || null,
         customerName: $scope.currentOrder.customerName,
         vat: $scope.currentOrder.vat,
-        mail: '',
-        phone: '',
         notes: $scope.currentOrder.notes,
         discount: $scope.currentOrder.discount,
         subtotal: $scope.currentOrder.subtotal,
         shipping: $scope.currentOrder.shipping,
         total: $scope.currentOrder.total,
-        paid: false,
+        paid: $scope.currentOrder.paid,
+        orderType: $scope.currentOrder.orderType,
         products: $scope.currentOrder.products,
         taxes: $scope.currentOrder.taxes,
         billingAddress: $scope.currentOrder.billingAddress,
-        shippingAddress: $scope.currentOrder.useBillingAddressForShipping
-          ? $scope.currentOrder.billingAddress
-          : $scope.currentOrder.shippingAddress,
+        shippingAddress: shippingAddress,
       };
 
       if ($scope.currentOrder.id) {
@@ -195,7 +280,21 @@ module.exports = {
       }
 
       defer.then((res) => {
-        console.log(res.data);
+        if ($scope.currentOrderIndex !== null) {
+          $scope.orders[$scope.currentOrderIndex] = res.data;
+        } else {
+          $scope.orders.unshift(res.data);
+        }
+        $scope.currentOrderIndex = null;
+        $scope.currentOrder = null;
+        $scope.showList();
+      }, (err) => {
+        if (err.data.exception === 'NoStockException') {
+          $scope.error = `No stock enough for "${err.data.details.productName}".
+          Maximum available is ${err.data.details.availableUnits}`;
+        } else {
+          handleError(err);
+        }
       });
     };
   },

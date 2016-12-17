@@ -92,6 +92,7 @@ module.exports = {
     $scope.showList = () => {
       $scope.currentProductIndex = null;
       $scope.currentProduct = null;
+      $scope.error = null;
       $scope.action = 'list';
     };
 

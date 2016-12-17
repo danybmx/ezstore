@@ -1,7 +1,7 @@
 <!-- Page Heading -->
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">
+		<h1 class="page-header" id="header">
 			Orders
 		</h1>
 		<ol class="breadcrumb">
@@ -36,15 +36,51 @@
                 <h3 class="panel-title">Orders</h3>
             </div>
             <div class="panel-body">
-				<a href="javascript:;" ng-click="createOrder()" class="btn btn-primary"><i class="fa fa-plus"></i> Create order</a>
+				<a uib-popover-template="'createOrderPopover.html'"
+				   popover-title="Create an order"
+				   popover-class="create-order-popover"
+				   popover-placement="right"
+				   class="btn btn-primary">
+				   	<i class="fa fa-plus"></i> New order
+			    </a>
+				<script type="text/ng-template" id="createOrderPopover.html">
+					<div>
+						<div class="form-group">
+							<label for="inputOrderType" class="control-label">Order type</label>
+							<select id="inputOrderType"
+									ng-options="value for (key, value) in orderTypes"
+									ng-model="createOrderOptions.orderType"
+									class="form-control"
+									required>
+								<option value="">Select one</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="inputStorage" class="control-label">Storage</label>
+							<select id="inputStorage"
+									ng-options="storage as storage.name for storage in storages track by storage.id"
+									ng-model="createOrderOptions.storage"
+									class="form-control"
+									required>
+								<option value="">Select one</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<button ng-disabled="!canCreateOrder()" ng-click="createOrder()" class="btn btn-success btn-block">
+								Create
+							</button>
+						</div>
+					</div>
+				</script>
 				<hr>
                 <div class="table-responsive">
                     <table class="table table-hover table-striped">
                         <thead>
                             <tr>
+								<th style="width: 130px">Reference</th>
+								<th style="width: 140px">Storage</th>
                                 <th>Customer</th>
-								<th style="width: 160px">Type</th>
-								<th style="width: 160px">Created</th>
+								<th style="width: 200px">Created</th>
                                 <th style="width: 150px; text-align: right;">Total</th>
 								<th style="width: 60px; text-align: center;">Paid</th>
                                 <th style="width: 100px; text-align: right"><i class="fa fa-wrench"></i></th>
@@ -52,10 +88,14 @@
                         </thead>
                         <tbody ng-repeat="order in orders">
                             <tr>
-                                <td>{{order.customerName}}</td>
-								<td>{{order.orderType}}</td>
-								<td>{{order.createdAt}}</td>
-                                <td style="text-align: right;">{{order.total}}</td>
+								<td>{{order.reference}}</td>
+								<td>{{order.storage.name}}</td>
+                                <td>
+									{{order.vat ? order.vat + ' - ' : ''}}
+									{{order.customerName}}
+								</td>
+								<td>{{order.createdAt | date:'medium'}}</td>
+                                <td style="text-align: right;">{{order.total | currency:'€' }}</td>
 								<td style="text-align: center;">
 									<i class="fa fa-check" ng-show="order.paid"></i>
 									<i class="fa fa-times" ng-hide="order.paid"></i>
@@ -83,7 +123,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">
                   	<span ng-show="isCurrentAction('create')">Create a new order</span>
-                  	<span ng-show="isCurrentAction('edit')">{{currentOrder.name}}</span>
+                  	<span ng-show="isCurrentAction('edit')">{{currentOrder.orderType}} - {{currentOrder.reference}} - {{currentOrder.customerName}}</span>
                 </h3>
             </div>
             <form name="forms.orderForm" ng-submit="forms.orderForm.$valid && saveOrder()" novalidate>
@@ -158,6 +198,11 @@
 					</div>
 					<hr>
 	                <h4>Products</h4>
+					<div class="checkbox">
+						<label>
+							<input ng-model="options.showTaxes" type="checkbox"> Show taxes in prices.
+						</label>
+					</div>
 	                <table class="table table-hover table-striped">
 						<thead>
 							<tr>
@@ -177,7 +222,7 @@
                                 <td>{{product.ean}}</td>
 								<td>{{product.name}}</td>
 								<td style="text-align: right;">
-								    {{product.price | currency:''}}€
+								    {{getPrice(product.price) | currency:'€'}}
 								</td>
                                 <td>
                                     <div class="input-group">
@@ -190,7 +235,7 @@
 								    </div>
 								</td>
 								<td style="text-align: right;">
-									{{product.total | currency:''}}€
+									{{getPrice(product.total) | currency:'€'}}
 								</td>
 								<td style="text-align: right">
 	                                <a class="btn btn-xs btn-danger" ng-click="deleteProduct($index)" uib-tooltip="Delete">
@@ -217,38 +262,44 @@
 	                    <textarea id="inputNotes" ng-model="currentOrder.notes" class="form-control"></textarea>
 	                </div>
 					<div class="row">
-						<div class="col-xs-12 col-sm-4 col-md-3 col-2">
-							<div class="form-group">
-								<label class="form-label">Subtotal</label>
-								<div class="input-group">
-									<input type="text" class="form-control" disabled style="text-align: right" placeholder="Price" ng-model="currentOrder.subtotal" required />
-									<span class="input-group-addon">€</span>
-								</div>
-							</div>
+						<div class="col-xs-12 col-sm-4 col-md-3">
 							<div class="form-group">
 								<label class="form-label">Discount</label>
 								<div class="input-group">
-									<input type="text" class="form-control" style="text-align: right" placeholder="Discount" ng-change="recalculate()" ng-model="currentOrder.discount" required />
+									<input type="text" class="form-control" style="text-align: right" placeholder="Discount" ng-change="recalculate()" ng-model="currentOrder.discount" />
 									<span class="input-group-addon">%</span>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="form-label">Sipping</label>
 								<div class="input-group">
-									<input type="text" class="form-control" style="text-align: right" placeholder="Shipping" ng-change="recalculate()" ng-model="currentOrder.shipping" required />
+									<input type="text" class="form-control" style="text-align: right" placeholder="Shipping" ng-change="recalculate()" ng-model="currentOrder.shipping" />
 									<span class="input-group-addon">€</span>
 								</div>
 							</div>
-							<div ng-repeat="tax in currentOrder.taxes" class="form-group">
-								<label class="form-label">{{tax.name}}</label>
-								<div class="input-group">
-									<input type="text" class="form-control" disabled style="text-align: right" placeholder="Price" ng-model="tax.total" required />
-									<span class="input-group-addon">€</span>
-								</div>
-							</div>
-							<div class="big-total">
-								{{currentOrder.total | currency:''}}€
-							</div>
+						</div>
+					</div>
+					<hr>
+					<h4>Details</h4>
+					<div class="row">
+						<div class="col-xs-12 col-sm-4 col-md-3">
+							<ul class="list-group total">
+								<li class="list-group-item">
+									<span class="caption">Subtotal:</span> {{currentOrder.subtotal | currency:'€' }}
+								</li>
+								<li class="list-group-item list-group-item-warning" ng-show="currentOrder.discount">
+									<span class="caption">Discount:</span> -{{currentOrder.subtotal * currentOrder.discount / 100 | currency:'€' }}
+								</li>
+								<li class="list-group-item">
+									<span class="caption">Shipping:</span> {{currentOrder.shipping | currency:'€' }}
+								</li>
+								<li class="list-group-item" ng-repeat="tax in currentOrder.taxes">
+									<span class="caption">{{tax.name}}:</span> {{tax.value | currency:'€' }}
+								</li>
+								<li class="list-group-item list-group-item-success">
+									<span class="caption">Total:</span> {{currentOrder.total | currency:'€'}}
+								</li>
+							</ul>
 						</div>
 					</div>
 				</div>

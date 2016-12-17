@@ -195,5 +195,8 @@ module.exports = function($rootScope, $http, Upload) {
     delete: (id) => {
       return $http.delete(apiUrl + '/orders/mng/' + id, options);
     },
+    types: () => {
+      return $http.get(apiUrl + '/orders/types', options);
+    },
   };
 };

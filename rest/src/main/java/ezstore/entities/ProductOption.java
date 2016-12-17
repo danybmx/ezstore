@@ -1,5 +1,6 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
@@ -26,7 +27,12 @@ public class ProductOption {
     private int discount;
     private boolean deleted = false;
 
-    @OneToMany(targetEntity = Stock.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "productId")
+    private Product product;
+
+    @OneToMany(targetEntity = Stock.class, fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "optionId")
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Stock> stock = new ArrayList<>();
@@ -40,6 +46,14 @@ public class ProductOption {
     private List<ProductImage> images = new ArrayList<>();
 
     public ProductOption() {
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Long getId() {

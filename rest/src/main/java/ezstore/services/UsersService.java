@@ -62,7 +62,7 @@ public class UsersService extends AuthorizedServiceHelper {
     @Path("/roles")
     @Secured(Role.ADMIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Map<Integer, String> getAvailableRoles() {
+    public Response getAvailableRoles() {
         Map<Integer, String> availableRoles = new HashMap<>();
         int index = 0;
 
@@ -70,7 +70,7 @@ public class UsersService extends AuthorizedServiceHelper {
             availableRoles.put(index++, role.toString());
         }
 
-        return availableRoles;
+        return Response.ok().entity(availableRoles).build();
     }
 
     @GET

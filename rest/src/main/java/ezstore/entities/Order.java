@@ -21,6 +21,14 @@ public class Order {
     @JoinColumn(name = "customerId")
     private User customer;
 
+    @OneToOne(targetEntity = Storage.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "storageId")
+    private Storage storage;
+
+    @OneToOne(targetEntity = Order.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "parentId")
+    private Order parent;
+
     @OneToOne(targetEntity = Address.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "billingAddressId")
     private Address billingAddress;
@@ -35,12 +43,13 @@ public class Order {
     private List<OrderProduct> products;
 
     @OneToMany(targetEntity = Tax.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "orderId")
+    @JoinColumn(name = "orderId")
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Tax> taxes;
 
     private OrderType orderType;
 
+    private Integer reference;
     private String customerName;
     private String vat;
     private String mail;
@@ -79,6 +88,34 @@ public class Order {
 
     public void setCustomer(User customer) {
         this.customer = customer;
+    }
+
+    public Storage getStorage() {
+        return storage;
+    }
+
+    public void setStorage(Storage storage) {
+        this.storage = storage;
+    }
+
+    public Order getParent() {
+        return parent;
+    }
+
+    public void setParent(Order parent) {
+        this.parent = parent;
+    }
+
+    public String getReference() {
+        return this.orderType.name() + "-" + String.format("%06d", this.reference);
+    }
+
+    public Integer getReferenceNumber() {
+        return this.reference;
+    }
+
+    public void setReference(Integer reference) {
+        this.reference = reference;
     }
 
     public Address getBillingAddress() {
