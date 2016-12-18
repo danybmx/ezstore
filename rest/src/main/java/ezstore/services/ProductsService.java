@@ -30,6 +30,13 @@ public class ProductsService {
     }
 
     @GET
+    @Path("/featured")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Product> getFeaturedProducts() {
+        return em.createQuery("SELECT r FROM Product r WHERE r.featured = true", Product.class).getResultList();
+    }
+
+    @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Product getProduct(@PathParam("id") Long id) {
@@ -51,9 +58,11 @@ public class ProductsService {
 
             Product product = new Product();
             product.setName(productMessage.getName());
+            product.setSlug(productMessage.getSlug());
             product.setDescription(productMessage.getDescription());
             product.setBrand(em.find(ProductBrand.class, productMessage.getBrandId()));
             product.setCategory(em.find(ProductCategory.class, productMessage.getCategoryId()));
+            product.setFeatured(productMessage.isFeatured());
             em.persist(product);
 
             return Response.ok(product).build();
@@ -74,9 +83,11 @@ public class ProductsService {
 
         if (product != null) {
             product.setName(productMessage.getName());
+            product.setSlug(productMessage.getSlug());
             product.setDescription(productMessage.getDescription());
             product.setBrand(em.find(ProductBrand.class, productMessage.getBrandId()));
             product.setCategory(em.find(ProductCategory.class, productMessage.getCategoryId()));
+            product.setFeatured(productMessage.isFeatured());
             em.merge(product);
             return Response.ok(product).build();
         }

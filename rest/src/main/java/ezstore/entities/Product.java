@@ -4,18 +4,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +20,13 @@ public class Product {
     private Long id;
 
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
     private Double price = 0.0;
+    private boolean featured = false;
     private boolean deleted = false;
+    private String slug;
 
     @OneToMany(targetEntity = ProductOption.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "productId")
@@ -134,8 +128,24 @@ public class Product {
         this.brand = brand;
     }
 
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public void setDeleted(boolean deleted) {

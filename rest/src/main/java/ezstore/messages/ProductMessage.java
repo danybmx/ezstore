@@ -1,10 +1,12 @@
 package ezstore.messages;
 
+import ezstore.helpers.SlugGenerator;
 import ezstore.helpers.Validation;
 
 public class ProductMessage implements Message {
     private String name;
     private String description;
+    private boolean featured;
     private Long brandId;
     private Long categoryId;
 
@@ -41,6 +43,18 @@ public class ProductMessage implements Message {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
+    public String getSlug() {
+        return SlugGenerator.toSlug(this.name);
     }
 
     @Override
