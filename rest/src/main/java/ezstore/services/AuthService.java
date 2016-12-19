@@ -62,11 +62,10 @@ public class AuthService {
                 }
 
                 // Create a new connection token
-                logger.info("User logged " + email + " in");
                 user.setToken(PasswordHelper.getConnectionToken());
                 em.persist(user);
 
-                return Response.ok("{\"token\": \"" + user.getToken() + "\"}", MediaType.APPLICATION_JSON).build();
+                return Response.ok().entity(user).build();
             } catch (Exception e) {
                 logger.severe(e.getMessage());
                 return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
