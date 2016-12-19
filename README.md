@@ -18,20 +18,7 @@ tienda de forma física.
 ###Gestion de productos
   
   - Asociados con una categoría
-  - Asociados con un proveedor
-  - Pueden tener diferentes opciones con attributos diferentes (talla, color, precio y referencia (OEM))
-  - Creación de etiquetas para los artículos
-
-###Gestion de entrada de mercancía
-
-  - Crear entrada de mercancia de proveedores introduciendo la factura 
-
-###Facturación
-
-  - Creación de facturas de los pedido pagados y completados
-  - Creación de facturas de los tickets que se realicen en la tienda física
-  - Creación de listado trimestral de facturas
-  - Creación de listado anual de facturas
+  - Pueden tener diferentes opciones con attributos diferentes (talla, color, precio y referencia)
 
 ##Tecnologías
 
@@ -65,9 +52,10 @@ El proyecto se dividirá en tres partes:
 
       - CRUD de productos
       - CRUD de usuarios
-      - CRUD de entrada de mercancía así como marcar la mercancía como recibida
+      - CRUD de categorias
+      - CRUD de marcas
+      - CRUD de almacenes
       - CRUD de pedidos
-      - Gestión de ventás de forma física
 
 ## Ampliación
 
