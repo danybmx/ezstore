@@ -6,23 +6,17 @@ router.get('/sign', function* () {
 });
 
 router.post('/login', function* () {
-  yield (cb) => {
-    const authToken = usersApi.login(
-      this.request.body.email, this.request.body.password
-    ).then((res) => {
-      if (authToken.token) {
-        const user = usersApi.me(authToken.token).then((res) => {
-          this.session.user = user;
-          this.redirect(this.session.redirectAfterLogin || '/');
-          cb();
-        });
-      } else {
-        this.session.flash = 'Ha ocurrido un error al intentar acceder con el usuario';
-        this.redirect('/sign#error');
-        cb();
-      }
-    });
-  };
+  const authToken = yield usersApi.login(
+    this.request.body.email, this.request.body.password
+  );
+  if (authToken.token) {
+    const user = yield usersApi.me(authToken.token);
+    this.session.user = user;
+    this.redirect(this.session.redirectAfterLogin || '/');
+  } else {
+    this.session.flash = 'Ha ocurrido un error al intentar acceder con el usuario';
+    this.redirect('/sign#error');
+  }
 });
 
 router.post('/register', function* () {
