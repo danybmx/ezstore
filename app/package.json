@@ -8,7 +8,7 @@
     "dist": "build",
     "dev": "gulp dev",
     "libraries": "gulp libraries",
-    "start": "electron .",
+    "start": "node server.js",
     "clean": "rm -rf ./dist",
     "build": "gulp build"
   },
@@ -26,9 +26,6 @@
       "category": "Office"
     }
   },
-  "dependencies": {
-    "angular-ui-bootstrap": "^2.3.1"
-  },
   "devDependencies": {
     "angular": "^1.5.9",
     "angular-animate": "^1.5.9",
@@ -36,6 +33,7 @@
     "angular-i18n": "^1.6.0",
     "angular-route": "^1.5.9",
     "angular-touch": "^1.5.9",
+    "angular-ui-bootstrap": "^2.3.1",
     "async": "^2.1.4",
     "babel-preset-latest": "^6.16.0",
     "babelify": "^7.3.0",
@@ -48,6 +46,7 @@
     "electron-builder": "^8.6.0",
     "eslint": "^3.11.0",
     "eslint-config-google": "^0.7.1",
+    "express": "^4.14.0",
     "font-awesome": "^4.7.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
