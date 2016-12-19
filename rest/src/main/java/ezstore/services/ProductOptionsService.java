@@ -36,6 +36,19 @@ public class ProductOptionsService {
         return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getProductOption(@PathParam("id") Long optionId) {
+        ProductOption productOption = em.find(ProductOption.class, optionId);
+
+        if (productOption != null) {
+            return Response.ok(productOption).build();
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
+    }
+
     @POST
     @Path("/")
     @Secured(Role.ADMIN)
@@ -51,6 +64,7 @@ public class ProductOptionsService {
             if (validation.isValid()) {
                 ProductOption productOption = new ProductOption();
                 productOption.setName(productOptionMessage.getName());
+                productOption.setPosition(productOptionMessage.getPosition());
                 productOption.setPrice(productOptionMessage.getPrice());
                 productOption.setEan(productOptionMessage.getEan());
                 productOption.setReference(productOptionMessage.getReference());
@@ -103,6 +117,7 @@ public class ProductOptionsService {
             if (validation.isValid()) {
                 productOption.setEan(productOptionMessage.getEan());
                 productOption.setName(productOptionMessage.getName());
+                productOption.setPosition(productOptionMessage.getPosition());
                 productOption.setPrice(productOptionMessage.getPrice());
                 productOption.setReference(productOptionMessage.getReference());
 

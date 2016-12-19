@@ -143,6 +143,7 @@ module.exports = {
       const product = {
         name: $scope.currentProduct.name,
         description: $scope.currentProduct.description,
+        featured: $scope.currentProduct.featured,
         brandId: $scope.currentProduct.brand.id,
         categoryId: $scope.currentProduct.category.id,
       };
@@ -205,11 +206,12 @@ module.exports = {
 
         // All images was saved
         $q.all(imagesDefers).then(() => {
-          $scope.currentProduct.options.map((option) => {
+          $scope.currentProduct.options.map((option, index) => {
             const optionMessage = {
               name: option.name,
               ean: option.ean,
               price: option.price,
+              position: index,
               discount: option.discount,
               reference: option.reference,
               imagesIds: option.imagesIds,
@@ -271,7 +273,7 @@ module.exports = {
         }, (err) => {
           $scope.error = err.data.message;
         });
-      };
+      }
     };
 
     // addOption
@@ -318,7 +320,7 @@ module.exports = {
           $scope.imagesToBeDeleted.push(image.id);
         }
         console.log($scope.imagesToBeDeleted);
-      };
+      }
     };
 
     // uploadFile

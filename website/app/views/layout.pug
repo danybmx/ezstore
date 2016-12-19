@@ -1,13 +1,78 @@
 html
   head
     title ezStore
-    link(rel="stylesheet", type="text/css", href="css/bundle.css")
+
+    // jQuery
+    script(src="https://code.jquery.com/jquery-3.1.1.min.js")
+
+    // Bootstrap
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
+    link(rel="stylesheet", type="text/css", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+
+    // Font-Awesome
+    link(rel="stylesheet", type="text/css", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
+
+    // Bundle.css
+    link(rel="stylesheet", type="text/css", href="/css/bundle.css")
 
   body
-    h1 ezStore
+    header
+      div.container
+        div#logo
+          a(href="/")
+            img(src="/img/logo.png" alt="ezStore")
+
+        div#topbar
+          div.left
+            if user
+              span.user
+                | Hola&nbsp;
+                = user.firstName
+              a(href="/logout") Desconectar
+              a(href="/profile") Mi cuenta
+
+            unless user
+              a(href="/sign") Login/Register
+
+          div.right
+            div.shopcart
+              a(href="/shopcart")
+                i.fa.fa-fw.fa-shopping-cart(style="margin-right: 5px")
+                =shopcart && shopcart.total > 0 ? currency(shopcart.total) : currency(0)
+
+            div.social
+              a(href="")
+                i.fa.fa-fw.fa-twitter
+              a(href="")
+                i.fa.fa-fw.fa-facebook
+              a(href="")
+                i.fa.fa-fw.fa-instagram
+
+        div#navigation
+          nav#main-navigation
+            a(href="/") Destacados
+            a(href="/categories") Categorías
+            a(href="/brands") Marcas
+
+            div#search.pull-right
+              input.search-input(placeholder="Buscar...")
+              button.search-button
+                i.fa.fa-search
+
     block content
 
-    script(src="js/bundle.js")
+    footer
+      .container
+        span.pull-right
+          a(href="https://github.com/danybmx/ezstore")
+            | Source&nbsp;
+            i.fa.fa-github
+        span.pull-left
+          i.fa.fa-copyright
+          | &nbsp;ezStore 2016
+
+    // Bundle.js
+    script(src="/js/bundle.js")
 
     if process.env.NODE_ENV !== 'production'
       script(id="__bs_script__").

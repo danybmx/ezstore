@@ -10,6 +10,7 @@ public class ProductOptionMessage implements Message {
     private Double price;
     private Double discount;
     private String reference;
+    private int position;
     private List<Long> imagesIds;
 
     public String getName() {
@@ -58,6 +59,14 @@ public class ProductOptionMessage implements Message {
 
     public void setImagesIds(List<Long> imagesIds) {
         this.imagesIds = imagesIds;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @Override

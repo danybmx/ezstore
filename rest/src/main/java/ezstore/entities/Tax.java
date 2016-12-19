@@ -1,12 +1,17 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 @Entity
 @Table(name = "taxes")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Tax {
 
     @Id
@@ -50,5 +55,12 @@ public class Tax {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public void calculateFrom(Double total) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.HALF_UP);
+
+        this.total = Double.valueOf(df.format(total * this.value / 100));
     }
 }

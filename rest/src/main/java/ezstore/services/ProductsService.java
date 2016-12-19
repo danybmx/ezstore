@@ -7,6 +7,7 @@ import ezstore.entities.ProductBrand;
 import ezstore.entities.ProductCategory;
 import ezstore.helpers.ErrorHelper;
 import ezstore.messages.ProductMessage;
+import org.jboss.resteasy.annotations.Query;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -46,6 +47,43 @@ public class ProductsService {
         }
 
         throw new NotFoundException();
+    }
+
+    @GET
+    @Path("/category/{categoryId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response productsByCategory(@PathParam("categoryId") Long categoryId) {
+        ProductCategory category = em.find(ProductCategory.class, categoryId);
+
+        List<Product> products = em.createQuery("SELECT r FROM Product r WHERE r.category = :category", Product.class)
+                .setParameter("category", category)
+                .getResultList();
+
+        return Response.ok().entity(products).build();
+    }
+
+    @GET
+    @Path("/brand/{brandId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response productsByBrand(@PathParam("brandId") Long brandId) {
+        ProductBrand brand = em.find(ProductBrand.class, brandId);
+
+        List<Product> products = em.createQuery("SELECT r FROM Product r WHERE r.brand = :brand", Product.class)
+                .setParameter("brand", brand)
+                .getResultList();
+
+        return Response.ok().entity(products).build();
+    }
+
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchProducts(@QueryParam("query") String name) {
+        List<Product> products = em.createQuery("SELECT r FROM Product r WHERE r.name LIKE :search", Product.class)
+                .setParameter("search", "%" + name + "%")
+                .getResultList();
+
+        return Response.ok().entity(products).build();
     }
 
     @POST

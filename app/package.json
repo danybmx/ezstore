@@ -36,6 +36,7 @@
     "angular-i18n": "^1.6.0",
     "angular-route": "^1.5.9",
     "angular-touch": "^1.5.9",
+    "async": "^2.1.4",
     "babel-preset-latest": "^6.16.0",
     "babelify": "^7.3.0",
     "bootstrap": "^3.3.7",

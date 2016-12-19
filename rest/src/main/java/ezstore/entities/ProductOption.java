@@ -1,12 +1,15 @@
 package ezstore.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ezstore.Config;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +17,7 @@ import java.util.List;
 @Table(name = "product_options")
 @SQLDelete(sql = "UPDATE product_options SET deleted=true WHERE id=?")
 @Where(clause = "deleted != true")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductOption {
 
     @Id
@@ -25,7 +29,8 @@ public class ProductOption {
     private String name;
     private Double price;
     private int discount;
-    private boolean deleted = false;
+    private boolean deleted;
+    private int position;
 
     @ManyToOne
     @JsonIgnore
@@ -43,6 +48,7 @@ public class ProductOption {
             joinColumns = @JoinColumn(name = "optionId", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "imageId", referencedColumnName = "id"))
     @Fetch(value = FetchMode.SUBSELECT)
+    @OrderBy("position")
     private List<ProductImage> images = new ArrayList<>();
 
     public ProductOption() {
@@ -96,6 +102,10 @@ public class ProductOption {
         this.price = price;
     }
 
+    public Double getPriceTaxIncluded() {
+        return price * (100 + Config.TAX) / 100;
+    }
+
     public List<Stock> getStock() {
         return stock;
     }
@@ -126,5 +136,21 @@ public class ProductOption {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public int getAvailableStock() {
+        int availableUnits = 0;
+        for (Stock stock : this.getStock()) {
+            availableUnits += stock.getUnits();
+        }
+        return availableUnits;
     }
 }

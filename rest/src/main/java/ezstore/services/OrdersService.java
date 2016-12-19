@@ -1,5 +1,6 @@
 package ezstore.services;
 
+import ezstore.Config;
 import ezstore.annotations.Secured;
 import ezstore.entities.*;
 import ezstore.entities.structs.OrderType;
@@ -14,10 +15,9 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.util.*;
 
 @Path("/orders")
 @Transactional
@@ -56,14 +56,53 @@ public class OrdersService extends AuthorizedServiceHelper {
     @POST
     @Secured
     public Response createCurrentUserOrder(Order newOrder) {
-        newOrder.setCustomer(getCurrentUser());
-        try {
-            updateStock(newOrder.getStorage(), null, newOrder);
-            Order order = em.merge(newOrder);
-            return Response.ok().entity(order).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ErrorHelper.createResponse(e);
+        Storage storage = em
+                .createQuery("SELECT s FROM Storage s WHERE useAsPrimary=true", Storage.class)
+                .setMaxResults(1)
+                .getSingleResult();
+
+        if (storage != null) {
+            if (newOrder != null) {
+                newOrder.setCustomer(getCurrentUser());
+                newOrder.setStorage(storage);
+                newOrder.setReference(generateReference(newOrder.getOrderType()));
+
+                List<Tax> defaultTaxes = new ArrayList<>();
+                Tax defaultTax = new Tax();
+                defaultTax.setName("IVA");
+                defaultTax.setValue(Config.TAX);
+                defaultTaxes.add(defaultTax);
+                newOrder.setTaxes(defaultTaxes);
+
+                DecimalFormat df = new DecimalFormat("#.##");
+                df.setRoundingMode(RoundingMode.HALF_UP);
+
+                Double shippingWithoutTax = newOrder.getShipping() / (100.0 + Config.TAX) * 100;
+                newOrder.setShipping(Double.valueOf(df.format(shippingWithoutTax)));
+
+                Double subtotal = 0.0;
+                for (OrderProduct op : newOrder.getProducts()) {
+                    subtotal += op.getTotal();
+                }
+
+                newOrder.setSubtotal(subtotal);
+                defaultTax.calculateFrom(subtotal + newOrder.getShipping());
+                Double total = subtotal + newOrder.getShipping() + defaultTax.getTotal();
+                newOrder.setTotal(total);
+
+                try {
+                    updateStock(newOrder.getStorage(), null, newOrder);
+                    Order order = em.merge(newOrder);
+                    return Response.ok().entity(order).build();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ErrorHelper.createResponse(e);
+                }
+            } else {
+                return ErrorHelper.createResponse(Response.Status.BAD_REQUEST);
+            }
+        } else {
+            return ErrorHelper.createResponse(Response.Status.INTERNAL_SERVER_ERROR, "No primary storage set");
         }
     }
 
@@ -75,8 +114,9 @@ public class OrdersService extends AuthorizedServiceHelper {
         if (currentOrder != null) {
             if (currentOrder.getCustomer().getId().equals(getCurrentUser().getId())) {
                 try {
-                    updateStock(currentOrder.getStorage(), currentOrder, orderUpdate);
+                    orderUpdate.setReference(currentOrder.getReferenceNumber());
                     orderUpdate.setModifiedAt(new Date());
+                    updateStock(orderUpdate.getStorage(), currentOrder, orderUpdate);
                     Order order = em.merge(orderUpdate);
                     return Response.ok().entity(order).build();
                 } catch (Exception e) {
@@ -165,7 +205,6 @@ public class OrdersService extends AuthorizedServiceHelper {
                 try {
                     orderUpdate.setReference(currentOrder.getReferenceNumber());
                     orderUpdate.setModifiedAt(new Date());
-
                     updateStock(orderUpdate.getStorage(), currentOrder, orderUpdate);
                     Order order = em.merge(orderUpdate);
                     return Response.ok().entity(order).build();

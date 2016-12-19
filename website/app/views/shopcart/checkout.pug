@@ -1,0 +1,44 @@
+extends ../layout
+
+append content
+  form(action="/shopcart/checkout", method="POST")
+    div.shopcart.container
+      div.row
+        div.col-xs-12.col-sm-6
+          h2 Datos personales
+          div.form-group
+            label.control-label Nombre *
+            input.form-control(name="firstName", value=shopcart.firstName)
+          div.form-group
+            label.control-label Apellidos *
+            input.form-control(name="lastName", value=shopcart.lastName)
+
+        div.col-xs-12.col-sm-6
+          h2 Datos de envio
+          div.form-group
+            label.control-label Dirección *
+            input.form-control(name="shippingAddress[address]", value=shopcart.shippingAddress.address)
+          div.form-group
+            label.control-label Código Postal *
+            input.form-control(name="shippingAddress[postalCode]", value=shopcart.shippingAddress.postalCode)
+          div.form-group
+            label.control-label Ciudad *
+            input.form-control(name="shippingAddress[city]", value=shopcart.shippingAddress.city)
+          div.form-group
+            label.control-label Provincia / Estado
+            input.form-control(name="shippingAddress[state]", value=shopcart.shippingAddress.state)
+          div.form-group
+            label.control-label Pais *
+            input.form-control(name="shippingAddress[country]", value=shopcart.shippingAddress.country || 'España')
+
+      div.row
+        div.col-xs-12
+          div.pull-right
+            button.btn.btn-success.btn-lg(type="submit")
+              | Continuar con el pago
+              i.fa.fa-angle-right(style="margin-left: 10px")
+
+          div.pull-left
+            a.btn.btn-primary.btn-lg(href="/shopcart")
+              i.fa.fa-angle-left(style="margin-right: 10px")
+              | Volver

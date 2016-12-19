@@ -51,6 +51,7 @@ public class ProductImagesService {
             if (validation.isValid()) {
                 ProductImage productImage = new ProductImage();
                 productImage.setFile(productImageMessage.getFile());
+                productImage.setPosition(productImageMessage.getPosition());
                 em.persist(productImage);
 
                 product.getImages().add(productImage);
@@ -82,6 +83,7 @@ public class ProductImagesService {
 
             if (validation.isValid()) {
                 productImage.setFile(productImageMessage.getFile());
+                productImage.setPosition(productImageMessage.getPosition());
                 em.persist(productImage);
 
                 product.getImages().add(productImage);

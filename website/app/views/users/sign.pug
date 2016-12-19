@@ -1,0 +1,36 @@
+extends ../layout
+
+append content
+  div.sign-page.container
+    div.col-xs-12.col-sm-6
+      h2 Ya tengo cuenta
+      form(method="POST", action="/login")
+        div.form-group
+          label.control-label E-mail
+          input.form-control(name="email")
+        div.form-group
+          label.control-label Contraseña
+          input.form-control(name="password", type="password")
+        div.form-group
+          button.btn.btn-primary(type="submit")
+            | Acceder
+            i.fa.fa-angle-right(style="margin-left: 10px")
+    div.col-xs-12.col-sm-6(style="border-left: 1px solid #eee")
+      h2 Todavía no tengo cuenta
+      form(method="POST", action="/register")
+        div.form-group
+          label.control-label E-mail
+          input.form-control(name="email")
+        div.form-group
+          label.control-label Contraseña
+          input.form-control(name="password", type="password")
+        div.form-group
+          label.control-label Nombre
+          input.form-control(name="firstName")
+        div.form-group
+          label.control-label Apellidos
+          input.form-control(name="lastName")
+        div.form-group
+          button.btn.btn-primary(type="submit")
+            | Crear mi cuenta
+            i.fa.fa-angle-right(style="margin-left: 10px")

@@ -4,6 +4,7 @@ import ezstore.helpers.Validation;
 
 public class ProductImageMessage implements Message {
     private String file;
+    private int position;
 
     public ProductImageMessage() {
     }
@@ -14,6 +15,14 @@ public class ProductImageMessage implements Message {
 
     public void setFile(String file) {
         this.file = file;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     @Override

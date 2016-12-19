@@ -51,6 +51,7 @@
                             <tr>
                                 <th style="width: 120px">Reference</th>
                                 <th>Product name</th>
+                                <th style="width: 60px; text-align: center;">Featured</th>
 								<th style="width: 160px">Brand</th>
 								<th style="width: 120px">Category</th>
                                 <th style="width: 100px">Price</th>
@@ -61,6 +62,10 @@
                             <tr>
                                 <td>{{product.reference || 'N/A'}}</td>
                                 <td>{{product.name}}</td>
+								<td style="text-align: center">
+									<i class="fa fa-check" ng-show="product.featured"></i>
+									<i class="fa fa-times" ng-hide="product.featured"></i>
+								</td>
 								<td>{{product.brand.name}}</td>
 								<td>{{product.category.name}}</td>
                                 <td>{{product.price | currency:'€'}}</td>
@@ -164,13 +169,18 @@
 	                        </select>
 	                    </div>
 					</div>
+                    <div class="form-group">
+						<div class="checkbox">
+						    <label>
+						      	<input ng-model="currentProduct.featured" type="checkbox"> Featured
+						    </label>
+						</div>
+	                </div>
 					<hr>
 	                <h4>Sizes / Colors</h4>
 	                <table class="table table-hover table-striped">
 						<thead>
 							<tr>
-								<th style="width: 100px">Reference</th>
-	                    		<th style="width: 160px">EAN</th>
 	                    		<th>Name</th>
 	                    		<th style="width: 160px">Price</th>
 	                    		<th style="width: 140px">Discount</th>
@@ -179,8 +189,6 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="option in currentProduct.options">
-								<td><input type="text" class="form-control" placeholder="#" ng-model="option.reference" /></td>
-                                <td><input type="text" class="form-control" placeholder="EAN" ng-model="option.ean" /></td>
 								<td><input type="text" class="form-control" placeholder="Name" ng-model="option.name" required /></td>
 								<td>
 								    <div class="input-group">

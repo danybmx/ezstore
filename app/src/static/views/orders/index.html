@@ -321,7 +321,7 @@
 									<span class="caption">Shipping:</span> {{currentOrder.shipping | currency:'€' }}
 								</li>
 								<li class="list-group-item" ng-repeat="tax in currentOrder.taxes">
-									<span class="caption">{{tax.name}}:</span> {{tax.value | currency:'€' }}
+									<span class="caption">{{tax.name}}:</span> {{tax.total | currency:'€' }}
 								</li>
 								<li class="list-group-item list-group-item-success">
 									<span class="caption">Total:</span> {{currentOrder.total | currency:'€'}}

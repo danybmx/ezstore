@@ -14,10 +14,10 @@ public class ProductImage {
     @Id
     @GeneratedValue
     private Long id;
-
+    private int position;
     private String file;
 
-    @ManyToMany(mappedBy = "images", targetEntity = ProductOption.class)
+    @ManyToMany(mappedBy = "images", targetEntity = ProductOption.class, cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<ProductOption> options;
 
@@ -50,5 +50,13 @@ public class ProductImage {
 
     public void setOptions(List<ProductOption> options) {
         this.options = options;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

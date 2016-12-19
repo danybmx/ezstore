@@ -33,6 +33,6 @@ task buildAndDeploy(type: War) {
 
     // Exclude dom4j because it's included with WildFly container
     classpath = classpath.filter { File file ->
-        return file.name != 'dom4j-1.6.1.jar'
+        return file.name != 'dom4j-1.6.1.jar' && file.name != 'antlr-2.7.7.jar'
     }
 }

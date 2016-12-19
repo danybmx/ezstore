@@ -60,7 +60,7 @@ gulp.task('dev', ['styles', 'scripts'], () => {
   browserSync.init({
     serveStatic: ['./src/'],
     files: srcPath + '/index.html',
-    port: 3000,
+    port: 3030,
   });
 
   // Styles
@@ -79,7 +79,7 @@ gulp.task('dev', ['styles', 'scripts'], () => {
  * Concat all the third party dependencies and uglify them
  */
 gulp.task('scripts.libraries', () => {
-  browserify(scriptsPath + '/libs.js', { debug: true })
+  browserify(scriptsPath + '/libs.js', { debug: true, port: 3031 })
     // .transform('babelify', { presets: ['latest'], debug: false })
     .bundle()
     .on('error', renderBrowserifyErrors)

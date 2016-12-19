@@ -1,9 +1,13 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ezstore.Config;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "order_products")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderProduct {
 
     @Id
@@ -75,6 +79,10 @@ public class OrderProduct {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Double getPriceTaxIncluded() {
+        return price * (100 + Config.TAX) / 100;
     }
 
     public Integer getUnits() {

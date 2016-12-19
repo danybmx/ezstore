@@ -1,10 +1,12 @@
 const fetch = require('node-fetch');
+const config = require('../config');
 
-const apiAddress = 'http://api:8080';
+const apiAddress = config.apiAddress;
 
 const defaultOptions = {
   headers: {
     'Accept': 'application/json',
+    'Content-Type': 'application/json',
   },
   compress: true,
   timeout: 1000,
@@ -13,9 +15,16 @@ const defaultOptions = {
 const doRequest = (method, url, body, options) => {
   if (!url.match(/^https?:\/\//)) url = apiAddress + url;
   if (typeof options === 'undefined' || options === null) options = {};
+  options.headers = Object.assign(
+    {},
+    defaultOptions.headers, options.headers || {}
+  );
   options = Object.assign({}, defaultOptions, options);
   options.method = method;
-
+  if (body) {
+    options.body = body;
+    options.headers['Content-Length'] = new Buffer(body).length;
+  }
   return new Promise((resolve, reject) => {
     fetch(url, options)
       .then((res) => res.json())
@@ -45,5 +54,4 @@ module.exports = {
   doPost: doPost,
   doPut: doPut,
   doDelete: doDelete,
-  doPatch: doPatch,
 };

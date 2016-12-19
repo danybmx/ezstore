@@ -1,5 +1,8 @@
 package ezstore.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import ezstore.entities.structs.OrderType;
 import ezstore.entities.structs.PaymentMethod;
 import org.hibernate.annotations.Fetch;
@@ -11,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Order {
 
     @Id
@@ -49,6 +53,7 @@ public class Order {
 
     private OrderType orderType;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Integer reference;
     private String customerName;
     private String vat;

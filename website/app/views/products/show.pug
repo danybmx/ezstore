@@ -1,0 +1,42 @@
+extends ../layout
+
+append content
+  script window.section = 'product-show';
+  div.container
+    div#product
+      h2=product.name
+
+      div.content
+        div.row
+          div.col-xs-12.col-sm-6.col-md-5(style='margin-bottom: 20px')
+            div#product-carousel.carousel.slide(data-ride="carousel")
+              ol.carousel-indicators
+                each image, index in product.images
+                  li(data-target="#product-carousel", data-slide-to=index, data-id=image.id, class=(index===0 ? 'active' : ''))
+
+              div.carousel-inner(role="listbox")
+                each image, index in product.images
+                  a.item(style="background-image: url(" + config.staticResources + '/products/' + image.file + ")", class=(index===0 ? 'active' : ''))
+
+              a.left.carousel-control(href="#product-carousel", role="button", data-slide="prev")
+                span.fa.fa-angle-left.fa-fw.fa-3x
+              a.right.carousel-control(href="#product-carousel", role="button", data-slide="next")
+                span.fa.fa-angle-right.fa-fw.fa-3x
+
+          div.col-xs-12.col-sm-6.col-md-7
+            div.data
+              form(action="/shopcart/" + product.id + "/" + product.slug, method="POST")
+                div.description=product.description
+                div.row
+                  div.col-xs-6.col-sm-6.col-md-4(style='margin-bottom: 10px')
+                    select.form-control#product-option-select(data-options=product.options, name="optionId", data-product-url=productUrl)
+                      for option in product.options
+                        option(value=option.id, selected=parseInt(selectedOption)===option.id)=option.name
+                    div#no-stock.stock-message Agotado
+                    div#last-units.stock-message Últimas unidades
+                  div.col-xs-6.col-sm-6.col-md-4
+                    div#option-price.price=currency(product.priceTaxIncluded)
+                  div.col-xs-12.col-sm-12.col-md-4
+                    button#add-to-cart.btn.btn-success.btn-block(type="submit", disabled="disabled")
+                      i.fa.fa-cart-plus
+                      | &nbsp;Añadir al carrito

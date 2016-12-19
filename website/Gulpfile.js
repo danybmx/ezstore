@@ -38,7 +38,6 @@ const renderBrowserifyErrors = function(err) {
     gutil.log(chalk.red(err.name) +
       ': ' + chalk.yellow(err.message));
   }
-  this.emit('end');
 };
 
 /**
@@ -72,9 +71,10 @@ gulp.task('dev', ['init-browserSync', 'styles', 'scripts'], () => {
   const monitor = nodemon({
     script: './server.js',
     watch: './app',
-    ignore: './app/resources/',
-    ext: 'js,pug',
+    ignore: ['./app/resources/'],
+    ext: 'js',
   });
+
   process.on('SIGINT', () => {
     monitor.on('exit', () => {
       process.exit();
@@ -95,7 +95,9 @@ gulp.task('dev', ['init-browserSync', 'styles', 'scripts'], () => {
 
   // Views
   gulp.watch('app/views/**/*.pug', () => {
-    browserSync.reload();
+    setTimeout(() => {
+      browserSync.reload();
+    }, 500);
   });
 });
 
@@ -116,7 +118,9 @@ gulp.task('scripts', () => {
     .pipe(gulp.dest(destPath + '/js'));
 
   if (isWatch()) {
-    task.pipe(browserSync.stream());
+    setTimeout(() => {
+      task.pipe(browserSync.stream());
+    }, 500);
   }
 
   return task;
@@ -136,11 +140,14 @@ gulp.task('styles', () => {
     .pipe(stylus({
       compress: !isWatch(),
     }))
+    .on('error', renderBrowserifyErrors)
     .pipe(rename('bundle.css'))
     .pipe(gulp.dest(destPath + '/css'));
 
   if (isWatch()) {
-    task.pipe(browserSync.stream());
+    setTimeout(() => {
+      task.pipe(browserSync.stream());
+    }, 500);
   }
 
   return task;

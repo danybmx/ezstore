@@ -106,7 +106,7 @@ public class UsersService extends AuthorizedServiceHelper {
     @Secured(Role.ADMIN)
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{id}")
+    @Path("/{id}")
     public Response updateUser(
             @PathParam("id") Long id,
             UserMessage userMessage) {

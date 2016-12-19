@@ -18,6 +18,7 @@ public class Storage {
 
     private String name;
     private String phone;
+    private boolean useAsPrimary;
 
     @OneToOne(targetEntity = Address.class)
     @Cascade(CascadeType.ALL)
@@ -49,6 +50,14 @@ public class Storage {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isUseAsPrimary() {
+        return useAsPrimary;
+    }
+
+    public void setUseAsPrimary(boolean useAsPrimary) {
+        this.useAsPrimary = useAsPrimary;
     }
 
     public Address getAddress() {

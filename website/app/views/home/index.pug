@@ -1,11 +1,31 @@
 extends ../layout
 
 append content
-  div.products(style="font-family: monospace;")
+  div#main-carousel.carousel.slide(data-ride="carousel")
+    ol.carousel-indicators
+      li(data-target="#main-carousel", data-slide-to="0", class="active")
+      li(data-target="#main-carousel", data-slide-to="1")
+
+    div.carousel-inner(role="listbox")
+      div.item.active(style="background-image: url('img/slider/1.jpg')")
+        div.carousel-caption
+          h3 Encuentra toda la ropa que estás buscando
+      div.item(style="background-image: url('img/slider/2.jpg')")
+        div.carousel-caption
+          h3 Busca tu mejor look
+
+    a.left.carousel-control(href="#main-carousel", role="button", data-slide="prev")
+      span.fa.fa-angle-left.fa-fw.fa-5x
+    a.right.carousel-control(href="#main-carousel", role="button", data-slide="next")
+      span.fa.fa-angle-right.fa-fw.fa-5x
+
+  div.featured-products.container
+    h2 Productos destacados
+
+
+    div.row
     each product in products
-      h3(style="margin: 0px; padding: 0px;")= product.name + ' ( ' + product.price + '€ )'
-      div.options
-        each option in product.options
-          div= '····|____ ' + option.name + ' ( ' + option.price + '€ )'
-            each stock in option.stock
-              div= '·········|____' + stock.storage.name + ' - ' + stock.units
+      a.col-xs-12.col-sm-6.col-md-4.col-lg-3.product(href="/products/"+product.id+"/"+product.slug)
+        span.image(style="background-image: url(" + config.staticResources + '/products/' + product.images[0].file + ")")
+        h3=product.name
+        span.price=currency(product.priceTaxIncluded)

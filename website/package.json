@@ -22,9 +22,13 @@
     "gulp-stylus": "^2.5.0",
     "gulp-util": "^3.0.7",
     "koa": "^1.2.4",
+    "koa-body": "^1.6.0",
+    "koa-generic-session": "^1.11.4",
     "koa-pug": "^3.0.0-1",
     "koa-router": "^5.4.0",
+    "koa-static": "^2.0.0",
     "node-fetch": "^1.6.3",
+    "paypal-rest-sdk": "^1.7.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },

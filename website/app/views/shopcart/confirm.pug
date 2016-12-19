@@ -1,0 +1,74 @@
+extends ../layout
+
+append content
+  div.shopcart.container
+    h2 Confirmación del pedido
+    div.row
+      div.col-xs-12.col-sm-8
+        table.table.table-stripped
+          thead
+            tr
+              th(style="width: 40px")
+              th Producto
+              th(style="text-align: right") Precio
+              th(style="text-align: center") Unidades
+              th(style="text-align: right") Total
+          tbody
+            each oProduct in shopcart.products
+              tr
+                td.image
+                  img(src=config.staticResources + '/products/' + oProduct.option.images[0].file)
+                td=oProduct.product.name + ' / ' + oProduct.option.name
+                td(style="text-align: right")=currency(oProduct.price)
+                td(style="text-align: center")=oProduct.units
+                td(style="text-align: right")=currency(oProduct.total)
+          tfoot
+            tr
+              td(colspan=4, style="text-align: right; font-weight: bold") Subtotal
+              td(style="text-align: right")=currency(shopcart.subtotal)
+            tr
+              td(colspan=4, style="text-align: right; font-weight: bold") Gastos de envío
+              td(style="text-align: right")=currency(shopcart.shipping)
+            tr
+              td(colspan=4, style="text-align: right; font-weight: bold") Total
+              td(style="text-align: right")=currency(shopcart.total)
+
+      div.col-xs-12.col-sm-4
+        h4 Datos de envío
+        ul.list-group
+          li.list-group-item
+            strong Comprador
+            i.fa.fa-angle-right(style="margin: 0 6px;")
+            = shopcart.firstName + ' ' + shopcart.lastName
+          li.list-group-item
+            strong Dirección
+            i.fa.fa-angle-right(style="margin: 0 6px;")
+            = shopcart.shippingAddress.address
+          li.list-group-item
+            strong Código postal
+            i.fa.fa-angle-right(style="margin: 0 6px;")
+            = shopcart.shippingAddress.postalCode
+          li.list-group-item
+            strong Ciudad
+            i.fa.fa-angle-right(style="margin: 0 6px;")
+            = shopcart.shippingAddress.city
+          if shopcart.shippingAddress.state
+            li.list-group-item
+              strong Provincia / Estado
+              i.fa.fa-angle-right(style="margin: 0 6px;")
+              = shopcart.shippingAddress.state
+          li.list-group-item
+            strong Pais
+            i.fa.fa-angle-right(style="margin: 0 6px;")
+            = shopcart.shippingAddress.country
+    div.row
+      div.col-xs-12
+        div.pull-right
+          a.btn.btn-success.btn-lg(href="/shopcart/payment")
+            | Continuar con el pago
+            i.fa.fa-paypal(style="margin-left: 10px")
+
+        div.pull-left
+          a.btn.btn-primary.btn-lg(href="/shopcart")
+            i.fa.fa-angle-left(style="margin-right: 10px")
+            | Volver
