@@ -9,7 +9,7 @@ const defaultOptions = {
     'Content-Type': 'application/json',
   },
   compress: true,
-  timeout: 1000,
+  timeout: 0,
 };
 
 const doRequest = (method, url, body, options) => {
