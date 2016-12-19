@@ -2,7 +2,7 @@ const helpers = require('./helpers');
 
 module.exports = function($rootScope, $location, $route, $http) {
   $rootScope.authToken = window.localStorage.getItem('authToken');
-  $rootScope.staticUrl = 'http://ezstore.dpstudios.es:8080/static';
+  $rootScope.staticUrl = 'http://localhost:8080/static';
   $rootScope.loading = false;
 
   for(const name in helpers) {
@@ -13,7 +13,7 @@ module.exports = function($rootScope, $location, $route, $http) {
 
   if ($rootScope.authToken) {
     $rootScope.loading = true;
-    $http.get('http://ezstore.dpstudios.es:8080/users/me', {
+    $http.get('http://localhost:8080/users/me', {
       headers: {
         Authorization: 'Bearer ' + $rootScope.authToken,
       },

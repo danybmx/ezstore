@@ -1,4 +1,4 @@
-const apiUrl = 'http://ezstore.dpstudios.es:8080';
+const apiUrl = 'http://localhost:8080';
 
 module.exports = function($rootScope, $http, Upload) {
   const options = {

@@ -7,7 +7,7 @@ module.exports = {
       const password = $scope.authForm.password;
       const authenticationData = email + ':' + password;
 
-      $http.get('http://ezstore.dpstudios.es:8080/auth', {
+      $http.get('http://localhost:8080/auth', {
         headers: {
           Authorization: 'Basic ' + btoa(authenticationData),
         },
@@ -16,7 +16,7 @@ module.exports = {
           $rootScope.authToken = res.data.token;
           window.localStorage.setItem('authToken', $rootScope.authToken);
 
-          $http.get('http://ezstore.dpstudios.es:8080/users/me', {
+          $http.get('http://localhost:8080/users/me', {
             headers: {
               Authorization: 'Bearer ' + $rootScope.authToken,
             },
