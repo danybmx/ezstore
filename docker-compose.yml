@@ -47,7 +47,6 @@ services:
         image: node:latest
         container_name: admin
         environment:
-            NODE_ENV: 'production'
             PORT: 8091
         ports:
             - "8091:8091"
