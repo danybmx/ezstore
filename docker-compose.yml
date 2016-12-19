@@ -28,8 +28,6 @@ services:
         volumes:
             - ./deployments:/opt/jboss/wildfly/standalone/deployments
             - ./media:/data/media
-        links:
-            - mysql
 
     website:
         image: node:latest
