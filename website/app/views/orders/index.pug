@@ -1,0 +1,62 @@
+extends ../layout
+
+append content
+  div.shopcart.container
+    div.row
+      div.col-xs-12
+        h2 Mis pedidos
+      div.col-xs-12
+        if orders && orders.length > 0
+          each order in orders
+            div.text-center
+              h3(style="font-weight: 400")=order.reference
+              div.create-date
+                strong='Creado el: '
+                =date(order.createdAt)
+              div.paid
+                strong='Pagado: '
+                if order.paid
+                  i.fa.fa-check
+                unless order.paid
+                  i.fa.fa-times
+                  a(href="/shopcart/payment?orderId="+order.id) Pagar ahora
+              div.sent
+                strong='Enviado: '
+                if order.sent
+                  i.fa.fa-check
+                unless order.sent
+                  i.fa.fa-times
+
+            table.table.table-stripped
+              thead
+                tr
+                  th(style="width: 40px")
+                  th Producto
+                  th(style="text-align: right") Precio
+                  th(style="text-align: center") Unidades
+                  th(style="text-align: right") Total
+              tbody
+                each oProduct in order.products
+                  tr
+                    td.image
+                      img(src=config.staticResources + '/products/' + oProduct.option.images[0].file)
+                    td=oProduct.product.name + ' / ' + oProduct.option.name
+                    td(style="text-align: right")=currency(oProduct.price)
+                    td(style="text-align: center")=oProduct.units
+                    td(style="text-align: right")=currency(oProduct.total)
+              tfoot
+                tr
+                  td(colspan=4, style="text-align: right; font-weight: bold") Subtotal
+                  td(style="text-align: right")=currency(order.subtotal)
+                tr
+                  td(colspan=4, style="text-align: right; font-weight: bold") Gastos de envío
+                  td(style="text-align: right")=currency(order.shipping)
+                tr
+                  td(colspan=4, style="text-align: right; font-weight: bold") IVA
+                  td(style="text-align: right")=currency(order.taxes[0].total)
+                tr
+                  td(colspan=4, style="text-align: right; font-weight: bold") Total
+                  td(style="text-align: right")=currency(order.total)
+            hr
+        unless orders && orders.length > 0
+          | Todavía no has creado ningún pedido

@@ -78,6 +78,13 @@ module.exports = {
       });
     };
 
+    $scope.setAsPrimary = (index) => {
+      const id = $scope.storages[index].id;
+      api.storages.setAsPrimary(id).then(() => {
+        $scope.loadData();
+      });
+    };
+
     // save
     $scope.saveStorage = () => {
       const storage = {

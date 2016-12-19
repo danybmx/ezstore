@@ -34,9 +34,8 @@ $(document).ready(() => {
       if (window.location.hash) {
         $('#product-option-select')
           .val(window.location.hash.replace('#', ''));
-      } else {
-        $('#product-option-select').change();
       }
+      $('#product-option-select').change();
     }
   }
 });

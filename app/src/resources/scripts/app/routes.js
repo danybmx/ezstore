@@ -3,8 +3,10 @@ module.exports = {
    * Dashboard
    */
   '/': {
-    templateUrl: 'static/views/home/dashboard.html',
-    controller: 'dashboardController',
+    // templateUrl: 'static/views/home/dashboard.html',
+    // controller: 'dashboardController',
+    templateUrl: 'static/views/orders/index.html',
+    controller: 'ordersController',
   },
 
   /**

@@ -10,6 +10,9 @@ module.exports = {
       },
     });
   },
+  register: (user) => {
+    return api.doPost('/users', JSON.stringify(user));
+  },
   me: (token) => {
     return api.doGet('/users/me', {
       headers: {

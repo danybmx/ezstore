@@ -16,6 +16,17 @@ html
     link(rel="stylesheet", type="text/css", href="/css/bundle.css")
 
   body
+    if session.flash
+      div#flash.modal.fade(role="dialog")
+        div.modal-dialog
+          div.modal-content
+            div.modal-header
+              button.close(data-dismiss="modal")
+                i.fa.fa-times
+              h4.modal-title Atención!
+            div.modal-body
+              p=session.flash
+      script $('#flash').modal('show')
     header
       div.container
         div#logo
@@ -29,7 +40,7 @@ html
                 | Hola&nbsp;
                 = user.firstName
               a(href="/logout") Desconectar
-              a(href="/profile") Mi cuenta
+              a(href="/orders") Mis pedidos
 
             unless user
               a(href="/sign") Login/Register

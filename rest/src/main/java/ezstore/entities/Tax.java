@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 
 @Entity
 @Table(name = "taxes")
@@ -58,9 +59,6 @@ public class Tax {
     }
 
     public void calculateFrom(Double total) {
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.HALF_UP);
-
-        this.total = Double.valueOf(df.format(total * this.value / 100));
+        this.total = Math.round(total * this.value) / 100.0;
     }
 }

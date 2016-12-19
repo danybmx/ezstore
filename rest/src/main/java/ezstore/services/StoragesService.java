@@ -72,6 +72,32 @@ public class StoragesService {
         }
     }
 
+    @GET
+    @Path("/primary/{id}")
+    @Secured(Role.ADMIN)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setAsPrimary(@PathParam("id") Long id) {
+        Storage storage = em.find(Storage.class, id);
+
+        if (storage != null) {
+            Storage primaryStorage = em.createQuery("SELECT s FROM Storage s WHERE s.useAsPrimary=true", Storage.class).getSingleResult();
+            if (primaryStorage != null) {
+                primaryStorage.setUseAsPrimary(false);
+                em.persist(primaryStorage);
+            }
+
+            storage.setUseAsPrimary(true);
+            em.persist(storage);
+
+            return Response.ok().build();
+        } else {
+            return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
+        }
+
+
+    }
+
     @PUT
     @Path("/{id}")
     @Secured(Role.ADMIN)

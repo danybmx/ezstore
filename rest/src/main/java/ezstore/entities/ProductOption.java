@@ -149,7 +149,9 @@ public class ProductOption {
     public int getAvailableStock() {
         int availableUnits = 0;
         for (Stock stock : this.getStock()) {
-            availableUnits += stock.getUnits();
+            if (stock.getStorage().isUseAsPrimary()) {
+                availableUnits += stock.getUnits();
+            }
         }
         return availableUnits;
     }

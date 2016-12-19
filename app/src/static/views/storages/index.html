@@ -45,6 +45,7 @@
                                 <th>Name</th>
 								<th>Phone</th>
 								<th>Address</th>
+								<th style="text-align: center">Default</th>
                                 <th style="width: 100px; text-align: right"><i class="fa fa-wrench"></i></th>
                             </tr>
                         </thead>
@@ -60,7 +61,14 @@
 										N/A
 									</span>
 								</td>
+								<td style="text-align: center">
+									<i class="fa fa-check" ng-show="storage.useAsPrimary"></i>
+									<i class="fa fa-times" ng-hide="storage.useAsPrimary"></i>
+								</td>
                                 <td style="text-align: right">
+									<a class="btn btn-xs btn-success" ng-if="!storage.useAsPrimary" ng-click="setAsPrimary($index)" uib-tooltip="Set as default">
+                                        <i class="fa fa-star"></i>
+                                    </a>
                                     <a class="btn btn-xs btn-primary" ng-click="editStorage($index)" uib-tooltip="Edit">
                                         <i class="fa fa-pencil"></i>
                                     </a>

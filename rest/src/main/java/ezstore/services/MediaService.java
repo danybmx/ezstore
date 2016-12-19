@@ -66,24 +66,29 @@ public class MediaService {
      * @param fileName target file name
      * @throws IOException file saving exception
      */
-    private String writeFile(InputStream inputStream, String path, String fileName) throws IOException {
+    private String writeFile(InputStream inputStream, String path, String fileName) throws Exception {
         String filePath = UPLOAD_FILE_PATH + path + "/";
         String qualifiedUploadFilePath = filePath + fileName;
 
-        File file = new File(qualifiedUploadFilePath);
-        FileOutputStream fop = new FileOutputStream(file);
+        File parent = new File(filePath);
+        if (parent.exists() || parent.mkdirs()) {
+            File file = new File(qualifiedUploadFilePath);
+            FileOutputStream fop = new FileOutputStream(file);
 
-        int read = 0;
-        byte[] bytes = new byte[1024];
+            int read = 0;
+            byte[] bytes = new byte[1024];
 
-        while ((read = inputStream.read(bytes)) != -1) {
-            fop.write(bytes, 0, read);
+            while ((read = inputStream.read(bytes)) != -1) {
+                fop.write(bytes, 0, read);
+            }
+
+            fop.flush();
+            fop.close();
+
+            return qualifiedUploadFilePath;
+        } else {
+            throw new Exception("Can't create the parent folders to save the image. " + filePath);
         }
-
-        fop.flush();
-        fop.close();
-
-        return qualifiedUploadFilePath;
     }
 
     /**
@@ -101,7 +106,6 @@ public class MediaService {
         for (String filename : contentDisposition) {
             if ((filename.trim().startsWith("filename"))) {
                 String[] name = filename.split("=");
-                System.out.println(name[1]);
                 String fileName = name[1].trim().replaceAll("\"", "");
                 String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
                 fileNameBuilder.append(".");

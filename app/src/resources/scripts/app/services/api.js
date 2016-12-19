@@ -137,6 +137,9 @@ module.exports = function($rootScope, $http, Upload) {
     delete: (id) => {
       return $http.delete(apiUrl + '/storages/' + id, options);
     },
+    setAsPrimary: (id) => {
+      return $http.get(apiUrl + '/storages/primary/' + id, options);
+    },
   };
 
   this.users = {

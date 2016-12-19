@@ -47,9 +47,11 @@ app.use(function* (next) {
   yield next;
 });
 
-// User injection
+// User & flash injection
 app.use(function* (next) {
   this.user = pug.locals.user = null;
+  pug.locals.session = Object.assign({}, this.session);
+  if (this.session.flash) this.session.flash = null;
   if (this.session.user) {
     this.user = this.session.user;
     pug.locals.user = this.user;

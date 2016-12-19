@@ -30,8 +30,8 @@ public class OrdersService extends AuthorizedServiceHelper {
     @Secured
     public Response getCurrentUserOrders() {
         List<Order> orders = em
-                .createQuery("SELECT o FROM Order o WHERE customer.id = :id", Order.class)
-                .setParameter("id", getCurrentUser().getId())
+                .createQuery("SELECT o FROM Order o WHERE o.customer = :customer", Order.class)
+                .setParameter("customer", getCurrentUser())
                 .getResultList();
 
         return Response.ok().entity(orders).build();
@@ -43,7 +43,29 @@ public class OrdersService extends AuthorizedServiceHelper {
     public Response getCurrentUserOrder(@PathParam("id") Long id) {
         Order order = em.find(Order.class, id);
         if (order != null) {
-            if (order.getCustomer().getId().equals(id)) {
+            if (order.getCustomer().getId().equals(getCurrentUser().getId())) {
+                return Response.ok().entity(order).build();
+            } else {
+                return ErrorHelper.createResponse(Response.Status.FORBIDDEN);
+            }
+        }
+
+        return ErrorHelper.createResponse(Response.Status.NOT_FOUND);
+    }
+
+    @GET
+    @Path("/findByPaymentTransaction/{transaction}")
+    @Secured
+    public Response getCurrentUserOrderByTransaction(@PathParam("transaction") String transaction) {
+        System.out.println(transaction);
+        Order order = em.createQuery("SELECT o FROM Order o WHERE o.paymentTransaction=:transaction", Order.class)
+                .setParameter("transaction", transaction)
+                .setMaxResults(1)
+                .getSingleResult();
+
+        System.out.println(order);
+        if (order != null) {
+            if (order.getCustomer().getId().equals(getCurrentUser().getId())) {
                 return Response.ok().entity(order).build();
             } else {
                 return ErrorHelper.createResponse(Response.Status.FORBIDDEN);
@@ -57,7 +79,7 @@ public class OrdersService extends AuthorizedServiceHelper {
     @Secured
     public Response createCurrentUserOrder(Order newOrder) {
         Storage storage = em
-                .createQuery("SELECT s FROM Storage s WHERE useAsPrimary=true", Storage.class)
+                .createQuery("SELECT s FROM Storage s WHERE s.useAsPrimary=true", Storage.class)
                 .setMaxResults(1)
                 .getSingleResult();
 
@@ -74,11 +96,8 @@ public class OrdersService extends AuthorizedServiceHelper {
                 defaultTaxes.add(defaultTax);
                 newOrder.setTaxes(defaultTaxes);
 
-                DecimalFormat df = new DecimalFormat("#.##");
-                df.setRoundingMode(RoundingMode.HALF_UP);
-
                 Double shippingWithoutTax = newOrder.getShipping() / (100.0 + Config.TAX) * 100;
-                newOrder.setShipping(Double.valueOf(df.format(shippingWithoutTax)));
+                newOrder.setShipping(Math.round(shippingWithoutTax * 100.0) / 100.0);
 
                 Double subtotal = 0.0;
                 for (OrderProduct op : newOrder.getProducts()) {

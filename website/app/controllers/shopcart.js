@@ -1,6 +1,7 @@
 const router = require('koa-router')();
 const productsApi = require('../api/products');
 const ordersApi = require('../api/orders');
+const optionsApi = require('../api/options');
 const config = require('../config');
 const paypal = require('paypal-rest-sdk');
 
@@ -24,8 +25,8 @@ router.get('/shopcart/checkout', function* () {
     this.session.redirectAfterLogin = '/shopcart/checkout';
     this.redirect('/sign');
   } else {
-    if (typeof this.session.shopcart.user !== 'undefined') {
-      this.session.shopcart.user = user.id;
+    if (typeof this.session.shopcart.user == 'undefined') {
+      this.session.shopcart.user = this.user.id;
       this.session.shopcart.firstName = this.user.firstName;
       this.session.shopcart.lastName = this.user.lastName;
     }
@@ -48,56 +49,108 @@ router.get('/shopcart/confirm', function* () {
   if (!this.user) {
     this.redirect('/sign');
   } else {
+    this.session.shopcart = recalculateShopcart(this.session.shopcart);
     this.render('shopcart/confirm');
   }
+});
+
+router.get('/shopcart/paypal/cancel', function* () {
+  this.session.flash = 'Se ha cancelado el pago del pedido, puedes volver a intentarlo en la sección "Mis pedidos" de "Mi cuenta"';
+  this.redirect('/');
+});
+
+router.get('/shopcart/paypal/paid', function* () {
+  const executePayment = (cb) => {
+    ordersApi.findByPaymentTransaction(
+      this.request.query.paymentId,
+      this.user.token
+    ).then((order) => {
+      const executePaymentJSON = {
+        'payer_id': this.request.query.PayerID,
+      };
+
+      paypal.payment.execute(
+        this.request.query.paymentId,
+        executePaymentJSON,
+        (error, payment) => {
+          if (error) {
+            console.log(error.response);
+            cb(error, false);
+          } else {
+            order.paymentInfo = JSON.stringify(payment);
+            order.paid = true;
+            ordersApi.update(order, this.user.token).then(() => {
+              this.session.flash = 'El pago se ha realizado correctamente';
+              cb(null, true);
+            }, (err) => {
+              cb(true, err);
+            });
+          }
+      });
+    });
+  };
+  result = yield executePayment;
+  this.redirect('/');
 });
 
 router.get('/shopcart/payment', function* () {
   if (!this.user) {
     this.redirect('/sign');
-  } else if (this.session.shopcart.products.length < 1) {
+  } else if (this.session.shopcart.products.length < 1 && !this.request.query.orderId) {
     this.redirect('/');
   } else {
-    const shopcart = this.session.shopcart;
-    const address = {
-      line1: shopcart.shippingAddress.address,
-      postalCode: shopcart.shippingAddress.postalCode,
-      city: shopcart.shippingAddress.city,
-      state: shopcart.shippingAddress.state,
-      country: shopcart.shippingAddress.country,
-    };
-    const orderData = {
-      customerName: shopcart.firstName + ' ' + shopcart.lastName,
-      orderType: 'ORDER',
-      paymentMethod: 'PAYPAL',
-      shipping: shopcart.shipping,
-      billingAddress: address,
-      shippingAddress: address,
-      products: shopcart.products.map((product) => {
-        return {
-          option: product.option,
-          product: product.product,
-          discount: 0,
-          ean: product.option.ean,
-          reference: product.option.reference,
-          name: product.product.name + ' - ' + product.option.name,
-          price: product.option.price,
-          total: product.option.price * product.units,
-          units: product.units,
-        };
-      }),
-    };
+    let orderData = {};
+    if ( ! this.request.query.orderId) {
+      const shopcart = this.session.shopcart;
+      const address = {
+        line1: shopcart.shippingAddress.address,
+        postalCode: shopcart.shippingAddress.postalCode,
+        city: shopcart.shippingAddress.city,
+        state: shopcart.shippingAddress.state,
+        country: shopcart.shippingAddress.country,
+      };
+      orderData = {
+        customerName: shopcart.firstName + ' ' + shopcart.lastName,
+        orderType: 'ORDER',
+        paymentMethod: 'PAYPAL',
+        shipping: shopcart.shipping,
+        billingAddress: address,
+        shippingAddress: address,
+        products: shopcart.products.map((product) => {
+          return {
+            option: product.option,
+            product: product.product,
+            discount: 0,
+            ean: product.option.ean,
+            reference: product.option.reference,
+            name: product.product.name + ' - ' + product.option.name,
+            price: product.option.price,
+            total: product.option.price * product.units,
+            units: product.units,
+          };
+        }),
+      };
+    }
 
     const paypalProcess = (cb) => {
-      ordersApi.create(orderData, this.user.token).then((order) => {
+      let defer;
+
+      if (!this.request.query.orderId) {
+        defer = ordersApi.create(orderData, this.user.token);
+      } else {
+        defer = ordersApi.find(this.request.query.orderId, this.user.token);
+      }
+
+      defer.then((order) => {
+        this.session.shopcart = null;
         const createPaymentJSON = {
           'intent': 'sale',
           'payer': {
             'payment_method': 'paypal',
           },
           'redirect_urls': {
-            'return_url': 'http://ezstore.dpstudios.es/shopcart/paypal/paid',
-            'cancel_url': 'http://ezstore.dpstudios.es/shopcart/paypal/cancel',
+            'return_url': config.baseUrl + '/shopcart/paypal/paid',
+            'cancel_url': config.baseUrl + '/shopcart/paypal/cancel',
           },
           'transactions': [{
             'item_list': {
@@ -117,32 +170,46 @@ router.get('/shopcart/payment', function* () {
               'details': {
                 'subtotal': order.subtotal,
                 'shipping': order.shipping,
-                'tax': order.total - order.subtotal - order.shipping,
+                'tax': Math.round((order.total - order.subtotal - order.shipping) * 100) / 100,
               },
             },
             'description': 'Pago del pedido ' + order.reference,
           }],
         };
 
-        paypal.payment.create(createPaymentJSON, (error, payment) => {
-          order.paymentInfo = payment.id;
-          ordersApi.update(order, this.user.token);
-          if (error) {
-            throw error;
-          } else {
-            for (let index = 0; index < payment.links.length; index++) {
-              if (payment.links[index].rel === 'approval_url') {
-                cb(null, payment.links[index].href);
+        if (!order.paymentTransaction) {
+          paypal.payment.create(createPaymentJSON, (error, payment) => {
+            if (error) {
+              order.paymentError = JSON.stringify(error);
+              ordersApi.update(order, this.user.token);
+              throw error;
+            } else {
+              for (let index = 0; index < payment.links.length; index++) {
+                if (payment.links[index].rel === 'approval_url') {
+                  order.paymentTransaction = payment.id;
+                  order.paymentInfo = JSON.stringify({
+                    'approvalUrl': payment.links[index].href,
+                  });
+                  ordersApi.update(order, this.user.token);
+                  cb(null, payment.links[index].href);
+                }
               }
+              cb('Some problem has been ocurred with the payment', null);
             }
-            cb('Some problem has been ocurred with the payment', null);
-          }
-        });
+          });
+        } else {
+          cb(null, JSON.parse(order.paymentInfo).approvalUrl);
+        }
       });
     };
-    result = yield paypalProcess;
-    if (result) {
-      this.redirect(result);
+    try {
+      result = yield paypalProcess;
+      if (result) {
+        this.redirect(result);
+      }
+    } catch (e) {
+      console.log(e);
+      console.log('Error on paypalProcess');
     }
   }
 });
@@ -175,6 +242,33 @@ router.post('/shopcart/:productId/:productSlug', function* () {
 
     shopcart.products[index].units += 1;
     shopcart.products[index].total += option.priceTaxIncluded;
+
+    let modified = false;
+    yield stockCheck = (cb) => {
+      let promises = [];
+      shopcart.products.forEach((product, i) => {
+        promises.push(new Promise((resolve, reject) => {
+          optionsApi
+            .find(product.product.id, product.option.id)
+            .then((option) => {
+              if (option.availableStock < product.units) {
+                modified = true;
+                shopcart.products[i].units = option.availableStock;
+                shopcart.products[i].total = product.price *
+                  option.availableStock;
+              }
+              resolve();
+            });
+        }));
+      });
+
+      Promise.all(promises).then(() => cb(null));
+    };
+
+    if (modified) {
+      this.session.flash = 'Se ha modificado tu carrito porque algún '
+        + 'producto ya no está disponible';
+    }
     this.session.shopcart = recalculateShopcart(shopcart);
 
     this.redirect('/products/'+productId+'/'+productSlug+'/'+optionId);

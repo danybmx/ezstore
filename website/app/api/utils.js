@@ -25,9 +25,17 @@ const doRequest = (method, url, body, options) => {
     options.body = body;
     options.headers['Content-Length'] = new Buffer(body).length;
   }
+
+  console.log('URL: ' + url);
+  console.log('OPTIONS: ');
+  console.log(options);
+
   return new Promise((resolve, reject) => {
     fetch(url, options)
-      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
       .then(resolve)
       .catch(reject);
   });

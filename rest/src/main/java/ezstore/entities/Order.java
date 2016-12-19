@@ -65,9 +65,17 @@ public class Order {
     private Double shipping;
     private Double total;
 
+    private boolean sent;
+    private String tracking;
+    private String courier;
+
     private boolean paid;
     private PaymentMethod paymentMethod;
+    private String paymentTransaction;
+    @Column(columnDefinition = "TEXT")
     private String paymentInfo;
+    @Column(columnDefinition = "TEXT")
+    private String paymentError;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -235,6 +243,30 @@ public class Order {
         this.orderType = orderType;
     }
 
+    public boolean isSent() {
+        return sent;
+    }
+
+    public void setSent(boolean sent) {
+        this.sent = sent;
+    }
+
+    public String getTracking() {
+        return tracking;
+    }
+
+    public void setTracking(String tracking) {
+        this.tracking = tracking;
+    }
+
+    public String getCourier() {
+        return courier;
+    }
+
+    public void setCourier(String courier) {
+        this.courier = courier;
+    }
+
     public boolean isPaid() {
         return paid;
     }
@@ -257,6 +289,22 @@ public class Order {
 
     public void setPaymentInfo(String paymentInfo) {
         this.paymentInfo = paymentInfo;
+    }
+
+    public String getPaymentTransaction() {
+        return paymentTransaction;
+    }
+
+    public void setPaymentTransaction(String paymentTransaction) {
+        this.paymentTransaction = paymentTransaction;
+    }
+
+    public String getPaymentError() {
+        return paymentError;
+    }
+
+    public void setPaymentError(String paymentError) {
+        this.paymentError = paymentError;
     }
 
     public Date getCreatedAt() {

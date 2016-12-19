@@ -49,6 +49,23 @@ module.exports = {
       }
     });
 
+    $scope.markAsPaid = (id) => {
+      const $index = getOrderIndex(id);
+      const order = $scope.orders[$index];
+      const modOrder = Object.assign({}, order, {paid: true});
+      api.orders.update(order.id, modOrder).then(() => {
+        $scope.loadData();
+      });
+    };
+    $scope.markAsSent = (id) => {
+      const $index = getOrderIndex(id);
+      const order = $scope.orders[$index];
+      const modOrder = Object.assign({}, order, {sent: true});
+      api.orders.update(order.id, modOrder).then(() => {
+        $scope.loadData();
+      });
+    };
+
     // Loda data
     $scope.loadData = () => {
       // Load orders
