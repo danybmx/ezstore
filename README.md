@@ -1,30 +1,30 @@
-#Proyecto de fin de grado
-##Desarrollo de Aplicaciones web
+# Proyecto de fin de grado
+## Desarrollo de Aplicaciones web
 
-##Proyecto
+## Proyecto
 El proyecto consiste en realizar una página web para una tienda online con gestion de productos, gestión de
 usuarios y gestión de entrada de mercancía y facturación sin utilizar ninguna aplicación ya existente como prestashop,
 woocomerce, etc..
 También se desarrollará una aplicación web que se ejecutará en entorno local donde se poderán realizar ventas en la
 tienda de forma física.
 
-##Objetivos
+## Objetivos
 
-###Gestion de usuarios
+### Gestion de usuarios
 
   - Sistema de roles
   - Registro / Login social (facebook, google)
 
-###Gestion de productos
+### Gestion de productos
   
   - Asociados con una categoría
   - Pueden tener diferentes opciones con attributos diferentes (talla, color, precio y referencia)
 
-##Tecnologías
+## Tecnologías
 
 El proyecto se dividirá en tres partes:
 
-###API Rest
+### API Rest
   
   - Se creará una aplicación web que será la encargada de gestionar y mantener centralizada toda la información de la
   tienda, usuarios, productos, facturas, etc...
@@ -33,7 +33,7 @@ El proyecto se dividirá en tres partes:
   - Las peticiones para realizar cualquier tipo de cambio estarán restringidas a usuarios con un rol específico, en caso
   de ser modificaciones en una cuenta concreta o un pedido, deberán de ser realizadas por el mismo usuario.
 
-###Página Web
+### Página Web
 
   - Se creará la página web utilizando Node.js de lado de servidor con el que nos conectaremos al API para obtener los
   datos y los renderizaremos utilizando un sistema de plantillas (Pug) y HTML5, CSS3 de lado del cliente.
@@ -45,7 +45,7 @@ El proyecto se dividirá en tres partes:
   - Versión optimizada para móviles
   - Apartado protegido para los usuarios donde pueden gestionar sus cuentas, pedidos, etc...
 
-###Aplicación Web
+### Aplicación Web
 
   - Se creará una aplicación web utilizando Electron que se comunicará con la API Rest para obtener y enviar
   información. Desde ella se podra:
@@ -57,7 +57,7 @@ El proyecto se dividirá en tres partes:
       - CRUD de almacenes
       - CRUD de pedidos
 
-## Ampliación
+## Ampliación
 
 - RSS para novedades de productos
 - Creación de contenedore docker para la aplicación
